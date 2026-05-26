@@ -581,6 +581,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
         <div class="hdr-logo" id="hdr-logo">
           <div class="hdr-mark">И</div>
           <div class="hdr-name">ИнвестГид</div>
+          <div id="hdr-plan-badge" style="display:none;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.05em;margin-left:2px"></div>
         </div>
       </div>
       <div class="hdr-right">
@@ -1548,6 +1549,20 @@ function updateAll(){
   var tgt=u.goal>0?u.goal:100000;
   var nm=u.name;var hr=NOW.getHours();
   R('greet').textContent=(nm?((hr<12?'Доброе утро':hr<17?'Добрый день':'Добрый вечер')+', '+nm+'!'):('Добро пожаловать!'));
+  // Бейдж тарифа в шапке
+  var pb=R('hdr-plan-badge');
+  if(pb){
+    var planNames={free:'Бесплатно',base:'Старт',pro:'Про',premium:'Премиум'};
+    var planColors={
+      free:   'background:rgba(150,150,150,0.15);color:#999;border:1px solid rgba(150,150,150,0.2)',
+      base:   'background:rgba(0,150,255,0.15);color:#6B9FFF;border:1px solid rgba(100,160,255,0.25)',
+      pro:    'background:rgba(0,212,100,0.15);color:#00D4AA;border:1px solid rgba(0,212,100,0.25)',
+      premium:'background:rgba(255,196,0,0.15);color:#FFD000;border:1px solid rgba(255,196,0,0.25)'
+    };
+    var plan=u.plan||'free';
+    pb.textContent=planNames[plan]||plan;
+    pb.style.cssText=(planColors[plan]||planColors.free)+';display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.05em;margin-left:4px';
+  }
   if(u.photo)R('hdr-av').innerHTML='<img src="'+u.photo+'">';
   else R('hdr-av').innerHTML='👤';
   R('pv').textContent=fmt(tot.t);
@@ -1706,11 +1721,22 @@ function resetMonth(){
 function fixAiCounters(){
   if(!curUser||!users[curUser])return;
   var u=users[curUser];
-  var max=LIMITS[u.plan||'free'].ai;
+  var plan=u.plan||'free';
+  var max=LIMITS[plan].ai;
   var changed=false;
+  // Сбрасываем rollover если он больше базового лимита тарифа
   if((u.aiRollover||0)>max){u.aiRollover=0;changed=true;}
-  if((u.aiExtra||0)>200){u.aiExtra=0;changed=true;} // 200 — максимум купленных пакетов
-  if(changed){sv('ig_users',users);console.log('[Fix] AI счётчики исправлены');updateAiCnt();}
+  // Сбрасываем Extra если явно завышен (не из купленных пакетов)
+  if((u.aiExtra||0)>100){u.aiExtra=0;changed=true;}
+  // Сбрасываем счётчик использования если он больше суммарного лимита
+  var total=max+(u.aiRollover||0)+(u.aiExtra||0);
+  if((u.aiUsed||0)>total){u.aiUsed=0;changed=true;}
+  if(changed){
+    sv('ig_users',users);
+    if(curUser&&users[curUser])fbSaveUser(curUser,users[curUser]);
+    updateAiCnt();
+    console.log('[Fix] AI счётчики исправлены → план:'+plan+' макс:'+max);
+  }
 }
 function updateAiCnt(){
   var plan=U().plan||'free';
@@ -2849,32 +2875,38 @@ function forceUpdate(){
   var btn=R('update-btn');
   var st=R('update-status');
   if(btn){btn.disabled=true;btn.textContent='⏳ Проверяем...';}
-  if(st)st.textContent='';
+  if(st){st.textContent='';st.style.color='var(--mu)';}
 
-  if(!('serviceWorker' in navigator)){
+  // Если открыто локально — просто перезагружаем
+  if(location.protocol==='file:'){
+    if(st){st.textContent='Открой приложение на сайте, а не локально';st.style.color='var(--red)';}
     if(btn){btn.disabled=false;btn.textContent='🔄 Проверить обновления';}
-    if(st){st.textContent='Обновите страницу вручную (F5)';st.style.color='var(--mu)';}
+    toast('⚠️ Открой: ruslan-16.github.io/investgid/');
     return;
   }
 
-  // Удаляем все кэши
+  // Если нет Service Worker — просто хард-перезагрузка
+  if(!('serviceWorker' in navigator)||!('caches' in window)){
+    if(st){st.textContent='Перезагружаем...';st.style.color='var(--green)';}
+    setTimeout(function(){location.reload(true);},500);
+    return;
+  }
+
+  // Удаляем все кэши и перезагружаем
   caches.keys().then(function(keys){
-    return Promise.all(keys.map(function(key){
-      return caches.delete(key);
-    }));
+    return Promise.all(keys.map(function(key){return caches.delete(key);}));
   }).then(function(){
-    // Обновляем Service Worker
     return navigator.serviceWorker.getRegistration();
   }).then(function(reg){
     if(reg)return reg.update();
   }).then(function(){
-    if(btn){btn.textContent='✅ Обновлено!';}
+    if(btn)btn.textContent='✅ Обновлено!';
     if(st){st.textContent='Перезагружаем...';st.style.color='var(--green)';}
-    // Перезагружаем страницу через 1 секунду
     setTimeout(function(){location.reload(true);},1000);
   }).catch(function(){
-    if(btn){btn.disabled=false;btn.textContent='🔄 Проверить обновления';}
-    if(st){st.textContent='Ошибка. Обновите страницу вручную.';st.style.color='var(--red)';}
+    // Даже при ошибке — просто перезагружаем
+    if(st){st.textContent='Перезагружаем...';st.style.color='var(--green)';}
+    setTimeout(function(){location.reload(true);},500);
   });
 }
 
