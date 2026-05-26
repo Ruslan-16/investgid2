@@ -2282,11 +2282,28 @@ function handlePlan(el){
     function(){
       U().plan=id;
       sU();
-      buildPlans();
-      buildProfile();
-      updateAll();   // обновляет бейдж тарифа в шапке
-      initPP();      // обновляет видимость блоков PRO/Premium
-      fixAiCounters(); // сбрасывает счётчик под новый тариф
+      // Обновляем UI с небольшой задержкой чтобы данные точно сохранились
+      setTimeout(function(){
+        updateAll();     // обновляет бейдж тарифа в шапке
+        updateAiCnt();   // обновляет счётчик запросов
+        buildPlans();    // перерисовывает список тарифов
+        buildProfile();  // обновляет профиль
+        initPP();        // обновляет видимость блоков PRO/Premium
+        fixAiCounters(); // сбрасывает счётчик под новый тариф
+        // Принудительно обновляем бейдж ещё раз
+        var pb=R('hdr-plan-badge');
+        if(pb){
+          var planNames={free:'Бесплатно',base:'Старт',pro:'Про',premium:'Премиум'};
+          var planColors={
+            free:   'background:rgba(150,150,150,0.15);color:#999;border:1px solid rgba(150,150,150,0.2)',
+            base:   'background:rgba(0,150,255,0.15);color:#6B9FFF;border:1px solid rgba(100,160,255,0.25)',
+            pro:    'background:rgba(0,212,100,0.15);color:#00D4AA;border:1px solid rgba(0,212,100,0.25)',
+            premium:'background:rgba(255,196,0,0.15);color:#FFD000;border:1px solid rgba(255,196,0,0.25)'
+          };
+          pb.textContent=planNames[id]||id;
+          pb.style.cssText=(planColors[id]||planColors.free)+';display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.05em;margin-left:4px';
+        }
+      }, 100);
       toast('✅ Тариф '+names[id]+' выбран');
     });
 }
