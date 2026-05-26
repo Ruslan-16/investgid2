@@ -1700,42 +1700,35 @@ var AI_Q={
 };
 function aiLeft(){
   var lim=LIMITS[U().plan||'free'];
-  var rollover=Math.min(U().aiRollover||0, lim.ai); // rollover не может быть больше базового лимита
-  return Math.max(0,lim.ai+rollover+(U().aiExtra||0)-(U().aiUsed||0));
+  return Math.max(0,lim.ai+(U().aiExtra||0)-(U().aiUsed||0));
 }
 function aiTotal(){
   var lim=LIMITS[U().plan||'free'];
-  var rollover=Math.min(U().aiRollover||0, lim.ai);
-  return lim.ai+rollover+(U().aiExtra||0);
+  return lim.ai+(U().aiExtra||0);
 }
 function resetMonth(){
   var m=NOW.toISOString().slice(0,7);
   if(U().aiMonth!==m){
-    var prev=aiLeft();
-    var max=LIMITS[U().plan||'free'].ai;
-    U().aiRollover=Math.min(prev,max); // никогда не больше базового лимита
-    U().aiUsed=0;U().aiMonth=m;sU();
+    U().aiRollover=0; // полностью убираем rollover
+    U().aiUsed=0;
+    U().aiMonth=m;
+    sU();
   }
 }
-// Миграция: исправляем старые значения в localStorage
 function fixAiCounters(){
   if(!curUser||!users[curUser])return;
   var u=users[curUser];
-  var plan=u.plan||'free';
-  var max=LIMITS[plan].ai;
   var changed=false;
-  // Сбрасываем rollover если он больше базового лимита тарифа
-  if((u.aiRollover||0)>max){u.aiRollover=0;changed=true;}
-  // Сбрасываем Extra если явно завышен (не из купленных пакетов)
-  if((u.aiExtra||0)>100){u.aiExtra=0;changed=true;}
-  // Сбрасываем счётчик использования если он больше суммарного лимита
-  var total=max+(u.aiRollover||0)+(u.aiExtra||0);
-  if((u.aiUsed||0)>total){u.aiUsed=0;changed=true;}
+  // Сбрасываем rollover полностью — он был источником бага
+  if((u.aiRollover||0)!==0){u.aiRollover=0;changed=true;}
+  // Сбрасываем завышенный счётчик использования
+  var max=LIMITS[u.plan||'free'].ai+(u.aiExtra||0);
+  if((u.aiUsed||0)>max){u.aiUsed=0;changed=true;}
   if(changed){
     sv('ig_users',users);
-    if(curUser&&users[curUser])fbSaveUser(curUser,users[curUser]);
-    updateAiCnt();
-    console.log('[Fix] AI счётчики исправлены → план:'+plan+' макс:'+max);
+    if(typeof fbSaveUser==='function')fbSaveUser(curUser,users[curUser]);
+    if(typeof updateAiCnt==='function')updateAiCnt();
+    console.log('[Fix] AI rollover сброшен, план:',u.plan,'макс:',max);
   }
 }
 function updateAiCnt(){
