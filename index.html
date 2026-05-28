@@ -541,7 +541,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
   <div class="cblk">
     <div class="cblk-t">🔒 Персональные данные (ФЗ №152-ФЗ)</div>
     <div class="cblk-b">
-      Данные (email, имя, история покупок) хранятся <strong>локально на вашем устройстве</strong> (localStorage). Не передаются третьим лицам, рекламным сетям или государственным органам. Вы можете удалить аккаунт и все данные в Профиле в любой момент. При удалении приложения все данные удаляются автоматически.
+      Данные (email, имя, история покупок) хранятся на защищённых облачных серверах (Google Cloud) с шифрованием. Передача данных происходит по зашифрованному соединению HTTPS. Данные не передаются третьим лицам, рекламным сетям или государственным органам без вашего согласия. Вы можете удалить аккаунт и все данные в Профиле в любой момент. Соответствует требованиям ФЗ №152-ФЗ в части защиты персональных данных.
     </div>
   </div>
 
@@ -1204,7 +1204,7 @@ var PLANS=[
 ];
 var LEGAL={
   terms:'<h4>Условия использования ИнвестГид</h4>Редакция 01.05.2024.<br><br><h4>1. Общие положения</h4>ИнвестГид — образовательный сервис. Не является брокером или инвестиционным советником по ФЗ №39-ФЗ.<br><br><h4>2. Ответственность</h4>Сервис не несёт ответственности за инвестиционные решения пользователей. Не гарантирует доходность.<br><br><h4>3. Оплата</h4>Оплата по выбранному тарифу. Возврат по законодательству РФ.',
-  privacy:'<h4>Конфиденциальность</h4>Данные (email, имя, записи) хранятся локально (localStorage). Не передаются на серверы. AI-запросы отправляются через Anthropic API без персональных данных. Удаление — в Профиле. Соответствует ФЗ №152-ФЗ.',
+  privacy:'<h4>Политика конфиденциальности</h4><p>Настоящая Политика конфиденциальности регулирует обработку персональных данных в соответствии с Федеральным законом №152-ФЗ «О персональных данных».</p><p><strong>Какие данные собираются:</strong> email-адрес, имя пользователя, данные портфеля (история покупок, настройки).</p><p><strong>Где хранятся:</strong> Данные хранятся на защищённых облачных серверах (Google Cloud) с шифрованием. Передача данных осуществляется по протоколу HTTPS.</p><p><strong>Передача третьим лицам:</strong> Данные не передаются третьим лицам, рекламным сетям или государственным органам без вашего согласия, за исключением случаев, предусмотренных законодательством РФ.</p><p><strong>AI-запросы:</strong> Тексты запросов обрабатываются через Anthropic API. Персональные данные (email, имя) не включаются в запросы.</p><p><strong>Удаление данных:</strong> Вы можете удалить аккаунт и все данные в разделе «Профиль» в любой момент.</p><p><strong>Соответствие законодательству:</strong> Соответствует требованиям ФЗ №152-ФЗ в части защиты персональных данных.</p>',
   disclaimer:'<h4>Правовой дисклеймер</h4>Все материалы ИнвестГид носят образовательный характер. НЕ являются ИИР по ст. 6.1 ФЗ №39-ФЗ, инвестиционным советом, офертой или гарантией дохода. Инвестирование сопряжено с риском потери средств. Прошлые результаты не гарантируют будущих.'
 };
 
@@ -1816,16 +1816,57 @@ async function askAI(qid){
         messages:[{role:'user',content:AI_Q[qid]?AI_Q[qid]():'Расскажи кратко об инвестициях.'}],
         tools:[{type:'web_search_20250305',name:'web_search'}]})});
     var d=await resp.json();
-    if(d.error){res.innerHTML='<div style="color:var(--red);font-size:12px">⚠️ '+d.error.message+'</div>';}
+    if(d.error){res.innerHTML='<div style="color:var(--red);font-size:12px">'+translateApiError(d.error)+'</div>';}
     else{
       var txt=(d.content||[]).filter(function(b){return b.type==='text'}).map(function(b){return b.text}).join('');
       res.innerHTML='<div class="ai-tag"><div class="ai-dot"></div>Актуальные данные</div>'+fmtAI(txt);
       U().aiUsed=(U().aiUsed||0)+1;sU();
     }
-  }catch(e){res.innerHTML='<div style="color:var(--red);font-size:12px">⚠️ '+e.message+'</div>';}
+  }catch(e){res.innerHTML='<div style="color:var(--red);font-size:12px">'+translateApiError(e)+'</div>';}
   aiLoading=false;updateAiCnt();
 }
 function fmtAI(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}
+
+/* ─── Перевод ошибок API на русский ─── */
+function translateApiError(err){
+  if(!err)return 'Неизвестная ошибка';
+  var msg=err.message||err.toString();
+  var type=err.type||'';
+  // Rate limit
+  if(msg.includes('rate limit')||msg.includes('rate_limit')||type==='rate_limit_error'){
+    return '⏳ Слишком много запросов. Подождите 1 минуту и попробуйте снова.';
+  }
+  // Overloaded
+  if(msg.includes('overloaded')||type==='overloaded_error'){
+    return '⏳ Сервис временно перегружен. Попробуйте через минуту.';
+  }
+  // Auth error
+  if(msg.includes('authentication')||msg.includes('auth')||type==='authentication_error'||msg.includes('invalid x-api-key')){
+    return '🔑 Ошибка доступа к AI. Обратитесь к администратору.';
+  }
+  // Token limit
+  if(msg.includes('max_tokens')||msg.includes('token')){
+    return '📝 Запрос слишком длинный. Попробуйте ещё раз.';
+  }
+  // Network error
+  if(msg.includes('Failed to fetch')||msg.includes('NetworkError')||msg.includes('network')){
+    return '📡 Нет соединения с интернетом. Проверьте подключение.';
+  }
+  // Timeout
+  if(msg.includes('timeout')||msg.includes('AbortError')){
+    return '⌛ Сервер не ответил вовремя. Попробуйте ещё раз.';
+  }
+  // Forbidden / permission
+  if(msg.includes('permission')||msg.includes('forbidden')||msg.includes('403')){
+    return '🔒 Нет доступа к AI. Обратитесь к администратору.';
+  }
+  // 529 overload
+  if(msg.includes('529')||msg.includes('529')){
+    return '⏳ Высокая нагрузка на сервис. Попробуйте через минуту.';
+  }
+  // Generic fallback
+  return '⚠️ Ошибка AI-сервиса. Попробуйте ещё раз.';
+}
 
 /* ════ PERSONAL PLAN ════ */
 function initPP(){
@@ -1864,7 +1905,7 @@ async function askPP(){
       var col=R('pp-collapse');if(col)col.textContent='Свернуть ▲';
       U().aiUsed=(U().aiUsed||0)+1;sU();
     }
-  }catch(e){toast('Ошибка: '+e.message);}
+  }catch(e){toast(translateApiError(e));}
   btn.textContent='📋 Обновить план';btn.disabled=false;updateAiCnt();
 }
 async function askPremium(){
@@ -1896,7 +1937,7 @@ async function askPremium(){
       // scroll into view
       setTimeout(function(){var pw=R('prem-home-wrap');if(pw)pw.scrollIntoView({behavior:'smooth',block:'start'});},300);
     }
-  }catch(e){toast('Ошибка: '+e.message);}
+  }catch(e){toast(translateApiError(e));}
 }
 
 /* ════ JOURNAL ════ */
@@ -2074,7 +2115,7 @@ function savePurch(){
     // Check if goal reached after new purchase
     if (typeof checkGoalAchieved === 'function') setTimeout(checkGoalAchieved, 500);
   }catch(e){
-    toast('Ошибка: '+e.message);
+    toast(translateApiError(e));
     console.error('savePurch error:',e);
   }
 }
@@ -2422,7 +2463,7 @@ function showLegal(type){
   var titles={terms:'Условия использования',privacy:'Конфиденциальность',disclaimer:'Дисклеймер'};
   var LEGAL={
     terms:'<h4>Условия использования ИнвестГид</h4>ИнвестГид — образовательный сервис. Не является брокером, инвестиционным советником по ФЗ №39-ФЗ. Все материалы носят образовательный характер.',
-    privacy:'<h4>Конфиденциальность</h4>Данные хранятся локально на устройстве (localStorage). Не передаются третьим лицам. Соответствует ФЗ №152-ФЗ.',
+    privacy:'<h4>Политика конфиденциальности</h4><p>Данные хранятся на защищённых облачных серверах (Google Cloud) с шифрованием HTTPS. Не передаются третьим лицам. Соответствует ФЗ №152-ФЗ. Удаление — в Профиле.</p>',
     disclaimer:'<h4>Дисклеймер</h4>Материалы ИнвестГид НЕ являются ИИР по ст. 6.1 ФЗ №39-ФЗ. Инвестирование сопряжено с риском потери средств.'
   };
   var t=R('legal-t'),c=R('legal-c');
@@ -2777,7 +2818,7 @@ function testKey(){
     headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:10,messages:[{role:'user',content:'ping'}]})
   }).then(function(r){return r.json();}).then(function(d){
-    st.textContent=d.error?'❌ '+d.error.message:'✅ Соединение OK — Claude API отвечает';
+    st.textContent=d.error?'❌ '+translateApiError(d.error):'✅ Соединение OK — Claude API отвечает';
     st.style.color=d.error?'var(--red)':'var(--green)';
   }).catch(function(e){st.textContent='❌ '+e.message;st.style.color='var(--red)';});
 }

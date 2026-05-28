@@ -14,7 +14,7 @@
      BASE_PATH = ''
    ─────────────────────────────────────────────── */
 const BASE_PATH = '/investgid2';
-const CACHE_NAME = 'investgid-v11';
+const CACHE_NAME = 'investgid-v14';
 
 const CACHE_FILES = [
   BASE_PATH + '/',
