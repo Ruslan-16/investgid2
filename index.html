@@ -1371,6 +1371,8 @@ function startApp(){
   R('app').classList.add('on');
   setStrat(U().strat||'cons');
   updateAll();buildRecs();buildProj();buildPlans();initPP();updateAiCnt();
+  // Загружаем API ключ из Firebase — работает на всех устройствах автоматически
+  setTimeout(loadApiKeyFromFirebase, 800);
   // Исправляем старые значения счётчиков AI
   setTimeout(fixAiCounters, 300);
   // Init EmailJS keys from admin config
@@ -1462,7 +1464,24 @@ function fbLogin(email,pass,onOk,onErr){
     });
 }
 
-/* ─── Выход из Firebase ─── */
+/* ─── Загрузка API ключа из Firebase ─── */
+function loadApiKeyFromFirebase(){
+  if(!fbDb)return;
+  fbDb.collection('config').doc('admin').get()
+    .then(function(doc){
+      if(doc.exists){
+        var key=doc.data().anthropic_key||doc.data().anthropicKey||'';
+        if(key){
+          var cfg=lv('ig_admin',{});
+          cfg.key=key;
+          sv('ig_admin',cfg);
+          adminCfg=cfg;
+          console.log('[Firebase] API ключ загружен');
+        }
+      }
+    })
+    .catch(function(e){console.warn('[Firebase] ошибка загрузки ключа:',e);});
+}
 function fbLogout(){
   if(fbAuth)fbAuth.signOut().catch(function(){});
   fbUser=null;
