@@ -8,6 +8,27 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ИнвестГид">
 <link rel="manifest" href="manifest.json">
+  <!-- OneSignal Push Notifications -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "d54ed606-dd81-4bd4-bf65-4ed3ec4fe424",
+        notifyButton: { enable: false }, // не показываем стандартную кнопку
+        promptOptions: {
+          slidedown: {
+            prompts: [{
+              type: "push",
+              autoPrompt: false, // не спрашиваем сами — спрашиваем через наш UI
+            }]
+          }
+        }
+      });
+      window._oneSignalReady = true;
+      console.log('[OneSignal] инициализирован');
+    });
+  </script>
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -2594,9 +2615,8 @@ function updateNotifBtn(){
   loadNotifSettings();
 }
 
-/* ─── Push-toggle ─── */
+/* ─── Push-toggle через OneSignal ─── */
 function togglePushNotif(){
-  if(!('Notification' in window)){toast('Браузер не поддерживает уведомления');return;}
   var cfg=lv('ig_notif',{pushOn:false,day:1,hour:10,emailOn:false,email:''});
   if(cfg.pushOn){
     cfg.pushOn=false;sv('ig_notif',cfg);
@@ -2604,16 +2624,47 @@ function togglePushNotif(){
     if(window._reminderTimer)clearTimeout(window._reminderTimer);
     toast('🔕 Push-уведомления отключены');
   } else {
-    requestNotifPermission(function(granted,reason){
-      if(granted){
-        cfg.pushOn=true;sv('ig_notif',cfg);
-        updatePushToggleUI();
-        scheduleReminderCustom();
-        toast('✅ Push-уведомления включены!');
-      } else if(reason==='denied'){
-        toast('⚠️ Разрешение отклонено. Разреши уведомления в настройках браузера.');
-      }
-    });
+    // Используем OneSignal если доступен
+    if(window._oneSignalReady&&window.OneSignal){
+      OneSignalDeferred.push(async function(OneSignal){
+        try{
+          await OneSignal.Slidedown.promptPush();
+          var isSubscribed=await OneSignal.User.PushSubscription.optedIn;
+          if(isSubscribed){
+            cfg.pushOn=true;sv('ig_notif',cfg);
+            updatePushToggleUI();
+            scheduleReminderCustom();
+            toast('✅ Push-уведомления включены!');
+          } else {
+            toast('⚠️ Разрешение не дано');
+          }
+        }catch(e){
+          // Fallback на браузерный API
+          requestNotifPermission(function(granted,reason){
+            if(granted){
+              cfg.pushOn=true;sv('ig_notif',cfg);
+              updatePushToggleUI();
+              scheduleReminderCustom();
+              toast('✅ Push-уведомления включены!');
+            } else {
+              toast('⚠️ Разреши уведомления в настройках браузера');
+            }
+          });
+        }
+      });
+    } else {
+      // Fallback — браузерный API
+      requestNotifPermission(function(granted,reason){
+        if(granted){
+          cfg.pushOn=true;sv('ig_notif',cfg);
+          updatePushToggleUI();
+          scheduleReminderCustom();
+          toast('✅ Push-уведомления включены!');
+        } else if(reason==='denied'){
+          toast('⚠️ Разреши уведомления в настройках браузера');
+        }
+      });
+    }
   }
 }
 function updatePushToggleUI(){
