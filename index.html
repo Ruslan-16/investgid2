@@ -1223,9 +1223,10 @@ setTimeout(function(){
         curUser=e;sv('ig_session',e);
         fbLoadUser(e,function(cloudData){
           if(cloudData){
-            if(!users[e])users[e]={};
-            Object.assign(users[e],cloudData);
+            // Firebase всегда главный — полностью заменяем локальные данные
+            users[e]=cloudData;
             sv('ig_users',users);
+            console.log('[Firebase] автовход, план:',cloudData.plan);
           }else if(!users[e]){
             users[e]={name:e.split('@')[0],consented:false,photo:'',budget:0,goal:100000,strat:'cons',purchases:[],plan:'free',aiUsed:0,aiExtra:0,aiRollover:0,aiMonth:''};
             sv('ig_users',users);
@@ -1313,13 +1314,13 @@ function doAuth(){
     // ВХОД
     fbLogin(e,p,function(){
       curUser=e;sv('ig_session',e);
-      // Загружаем данные из облака
+      // Загружаем данные из облака — Firebase всегда главный источник
       fbLoadUser(e,function(cloudData){
         if(cloudData){
-          // Мержим облако с локальными данными
-          if(!users[e])users[e]={};
-          Object.assign(users[e],cloudData);
+          // Firebase данные полностью заменяют локальные
+          users[e]=cloudData;
           sv('ig_users',users);
+          console.log('[Firebase] данные загружены, план:',cloudData.plan);
         }else if(!users[e]){
           users[e]={name:e.split('@')[0],consented:false,photo:'',budget:0,goal:100000,strat:'cons',purchases:[],plan:'free',aiUsed:0,aiExtra:0,aiRollover:0,aiMonth:''};
           sv('ig_users',users);
