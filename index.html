@@ -1170,7 +1170,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
   </div>
   <div style="display:flex;gap:4px;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:16px">
     <button class="adtab on" id="adt-api" onclick="adTab('api')">API Ключ</button>
-    <button class="adtab" id="adt-users" onclick="adTab('users')">Юзеры</button>
+    <button class="adtab" id="adt-users" onclick="adTab('users')">Пользователи</button>
     <button class="adtab" id="adt-stats" onclick="adTab('stats')">Статистика</button>
     <button class="adtab" id="adt-test" onclick="adTab('test')">Тест</button>
   </div>
@@ -1432,6 +1432,8 @@ function doAuth(){
         }else if(!users[e]){
           users[e]={name:e.split('@')[0],consented:false,photo:'',budget:0,goal:100000,strat:'cons',purchases:[],plan:'free',aiUsed:0,aiExtra:0,aiRollover:0,aiMonth:''};
           sv('ig_users',users);
+          // Сохраняем нового пользователя в Firestore чтобы он был виден в админке
+          fbSaveUser(e,users[e]);
         }
         restoreBtn();
         if(!users[e].consented){R('scr-auth').classList.remove('on');R('scr-consent').classList.add('on');}
@@ -1495,6 +1497,8 @@ function startApp(){
   updateAll();buildRecs();buildProj();buildPlans();initPP();updateAiCnt();
   // Загружаем API ключ из Firebase — работает на всех устройствах автоматически
   setTimeout(loadApiKeyFromFirebase, 800);
+  // Инициализируем подсказки
+  setTimeout(initTooltips, 1500);
   // Исправляем старые значения счётчиков AI
   setTimeout(fixAiCounters, 300);
   // Init EmailJS keys from admin config
@@ -3278,6 +3282,8 @@ function initTooltips(){
 document.addEventListener('DOMContentLoaded',function(){
   setTimeout(initTooltips,2000);
 });
+// Также перезапускаем при переключении вкладок
+function reinitTooltips(){setTimeout(initTooltips,300);}
 var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
 var isInStandaloneMode=window.navigator.standalone===true;
 // Показываем подсказку для iOS
