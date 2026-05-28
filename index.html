@@ -61,36 +61,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
 .ld-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));animation:fill 1.4s ease forwards}
 @keyframes fill{to{width:100%}}
 
-/* ── Tooltips ── */
-.tt{position:relative}
-.tt-box{
-  position:absolute;
-  bottom:calc(100% + 8px);
-  left:50%;
-  transform:translateX(-50%);
-  background:rgba(20,30,25,0.97);
-  border:1px solid rgba(0,212,100,0.3);
-  border-radius:10px;
-  padding:8px 12px;
-  font-size:12px;
-  color:var(--tx);
-  white-space:nowrap;
-  z-index:9999;
-  pointer-events:none;
-  opacity:0;
-  transition:opacity .2s;
-  box-shadow:0 4px 20px rgba(0,0,0,0.4);
-  line-height:1.5;
-}
-.tt-box::after{
-  content:'';
-  position:absolute;
-  top:100%;left:50%;
-  transform:translateX(-50%);
-  border:6px solid transparent;
-  border-top-color:rgba(0,212,100,0.3);
-}
-.tt-box.show{opacity:1;}
+/* SCREENS */
 .screen{position:fixed;inset:0;background:linear-gradient(135deg,#0d1117 0%,#0d2e1a 40%,#1a3a0d 70%,#0f2a1a 100%);z-index:100;display:none;overflow-y:auto}
 .screen.on{display:block}
 .sw{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px}
@@ -570,7 +541,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
   <div class="cblk">
     <div class="cblk-t">🔒 Персональные данные (ФЗ №152-ФЗ)</div>
     <div class="cblk-b">
-      Данные (email, имя, история покупок) хранятся на защищённых облачных серверах (Google Cloud) с шифрованием. Передача данных происходит по зашифрованному соединению HTTPS. Данные не передаются третьим лицам, рекламным сетям или государственным органам без вашего согласия. Вы можете удалить аккаунт и все данные в Профиле в любой момент. Соответствует требованиям ФЗ №152-ФЗ в части защиты персональных данных.
+      Данные (email, имя, история покупок) хранятся на защищённых облачных серверах (Google Cloud) с шифрованием. Передача данных происходит по зашифрованному соединению HTTPS. Данные доступны только вам и администрации сервиса в целях технической поддержки. Не передаются рекламным сетям или иным третьим лицам. Вы можете удалить аккаунт и все данные в Профиле в любой момент. Соответствует требованиям ФЗ №152-ФЗ.
     </div>
   </div>
 
@@ -621,60 +592,116 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
 </div>
 
 <!-- ONBOARDING SCREEN -->
-<div class="screen" id="scr-onboard" style="justify-content:center;padding:24px 20px;overflow-y:auto">
-  <div style="max-width:420px;width:100%;margin:0 auto">
-    <!-- Logo -->
-    <div style="text-align:center;margin-bottom:28px">
-      <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#00D4AA,#0066FF);display:inline-flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#000;font-family:var(--serif);margin-bottom:14px">И</div>
-      <div style="font-family:var(--serif);font-size:24px;font-weight:800;background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent">ИнвестГид</div>
-      <div style="color:var(--mu);font-size:14px;margin-top:6px">Твой помощник по инвестициям</div>
-    </div>
+<div class="screen" id="scr-onboard" style="overflow:hidden;display:none">
+  <div style="height:100%;display:flex;flex-direction:column">
 
-    <!-- Steps -->
-    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:32px">
-      <div style="background:rgba(0,212,100,0.08);border:1px solid rgba(0,212,100,0.2);border-radius:14px;padding:16px;display:flex;gap:14px;align-items:flex-start">
-        <div style="font-size:28px;flex-shrink:0">📒</div>
-        <div>
-          <div style="font-weight:700;font-size:15px;margin-bottom:4px">Журнал покупок</div>
-          <div style="color:var(--mu);font-size:13px;line-height:1.5">Добавляй активы — ОФЗ, акции, фонды. Считай расчётный доход автоматически</div>
+    <!-- Slides -->
+    <div id="ob-slides" style="flex:1;display:flex;overflow:hidden;position:relative">
+
+      <!-- Страница 1 — Главная и журнал -->
+      <div class="ob-slide" style="min-width:100%;padding:36px 24px 16px;display:flex;flex-direction:column;overflow-y:auto">
+        <div style="text-align:center;margin-bottom:20px">
+          <div style="font-size:52px;margin-bottom:10px">📱</div>
+          <div style="font-family:var(--serif);font-size:22px;font-weight:800;margin-bottom:6px">Твой инвестиционный<br>помощник</div>
+          <div style="color:var(--mu);font-size:13px">Что умеет ИнвестГид</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;flex-shrink:0">🏠</div>
+            <div><div style="font-size:13px;font-weight:600">Главная</div><div style="font-size:11px;color:var(--mu);margin-top:2px">Обзор портфеля, AI-советы и путь к цели</div></div>
+          </div>
+          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;flex-shrink:0">📒</div>
+            <div><div style="font-size:13px;font-weight:600">Журнал покупок</div><div style="font-size:11px;color:var(--mu);margin-top:2px">AI сам найдёт доходность активов автоматически</div></div>
+          </div>
+          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;flex-shrink:0">➕</div>
+            <div><div style="font-size:13px;font-weight:600">Добавить актив</div><div style="font-size:11px;color:var(--mu);margin-top:2px">Введи название — AI автоматически найдёт доходность</div></div>
+          </div>
+          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;flex-shrink:0">🎯</div>
+            <div><div style="font-size:13px;font-weight:600">Шкала цели</div><div style="font-size:11px;color:var(--mu);margin-top:2px">Показывает как далеко ты от цели пассивного дохода</div></div>
+          </div>
         </div>
       </div>
-      <div style="background:rgba(0,102,255,0.08);border:1px solid rgba(0,102,255,0.2);border-radius:14px;padding:16px;display:flex;gap:14px;align-items:flex-start">
-        <div style="font-size:28px;flex-shrink:0">🤖</div>
-        <div>
-          <div style="font-weight:700;font-size:15px;margin-bottom:4px">AI-советы</div>
-          <div style="color:var(--mu);font-size:13px;line-height:1.5">Актуальные данные по ОФЗ, дивидендам и ставке ЦБ прямо в приложении</div>
+
+      <!-- Страница 2 — AI кнопки и стратегии -->
+      <div class="ob-slide" style="min-width:100%;padding:36px 24px 16px;display:flex;flex-direction:column;overflow-y:auto">
+        <div style="text-align:center;margin-bottom:20px">
+          <div style="font-size:52px;margin-bottom:10px">🤖</div>
+          <div style="font-family:var(--serif);font-size:22px;font-weight:800;margin-bottom:6px">AI-советы<br>и стратегии</div>
+          <div style="color:var(--mu);font-size:13px">Актуальные данные от нейросети</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="background:rgba(0,212,100,.08);border:1px solid rgba(0,212,100,.15);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;flex-shrink:0">⚡</div>
+            <div><div style="font-size:13px;font-weight:600">Счётчик AI-запросов</div><div style="font-size:11px;color:var(--mu);margin-top:2px">Каждый запрос — актуальные данные от нейросети</div></div>
+          </div>
+          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;flex-shrink:0">🤖</div>
+            <div><div style="font-size:13px;font-weight:600">Что купить</div><div style="font-size:11px;color:var(--mu);margin-top:2px">Новейший AI подберёт что купить под твою стратегию</div></div>
+          </div>
+          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;flex-shrink:0">📈</div>
+            <div><div style="font-size:13px;font-weight:600">Доходность ОФЗ</div><div style="font-size:11px;color:var(--mu);margin-top:2px">Узнай где сейчас выгоднее всего вложить</div></div>
+          </div>
+          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;flex-shrink:0">💰</div>
+            <div><div style="font-size:13px;font-weight:600">Дивиденды</div><div style="font-size:11px;color:var(--mu);margin-top:2px">Сколько можно заработать прямо сейчас</div></div>
+          </div>
+          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;flex-shrink:0">🏦</div>
+            <div><div style="font-size:13px;font-weight:600">Ставка ЦБ</div><div style="font-size:11px;color:var(--mu);margin-top:2px">Напрямую влияет на доходность твоего портфеля</div></div>
+          </div>
         </div>
       </div>
-      <div style="background:rgba(247,183,49,0.08);border:1px solid rgba(247,183,49,0.2);border-radius:14px;padding:16px;display:flex;gap:14px;align-items:flex-start">
-        <div style="font-size:28px;flex-shrink:0">📊</div>
-        <div>
-          <div style="font-weight:700;font-size:15px;margin-bottom:4px">Аналитика</div>
-          <div style="color:var(--mu);font-size:13px;line-height:1.5">Следи за ростом портфеля, сравнивай с бенчмарком и строй прогнозы</div>
+
+      <!-- Страница 3 — Аналитика, профиль, стратегии -->
+      <div class="ob-slide" style="min-width:100%;padding:36px 24px 16px;display:flex;flex-direction:column;overflow-y:auto">
+        <div style="text-align:center;margin-bottom:20px">
+          <div style="font-size:52px;margin-bottom:10px">📊</div>
+          <div style="font-family:var(--serif);font-size:22px;font-weight:800;margin-bottom:6px">Аналитика<br>и настройки</div>
+          <div style="color:var(--mu);font-size:13px">Следи за ростом и ставь цели</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;flex-shrink:0">📊</div>
+            <div><div style="font-size:13px;font-weight:600">Аналитика</div><div style="font-size:11px;color:var(--mu);margin-top:2px">Прогнозы на 1, 3 и 5 лет вперёд</div></div>
+          </div>
+          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;flex-shrink:0">👤</div>
+            <div><div style="font-size:13px;font-weight:600">Профиль</div><div style="font-size:11px;color:var(--mu);margin-top:2px">Настрой цель, бюджет и уведомления</div></div>
+          </div>
+          <div style="background:rgba(0,212,100,.08);border:1px solid rgba(0,212,100,.15);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;flex-shrink:0">🛡️</div>
+            <div><div style="font-size:13px;font-weight:600">Консерватор</div><div style="font-size:11px;color:var(--mu);margin-top:2px">ОФЗ + дивиденды. Стабильный доход ~11%/год</div></div>
+          </div>
+          <div style="background:rgba(108,143,255,.08);border:1px solid rgba(108,143,255,.15);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;flex-shrink:0">⚖️</div>
+            <div><div style="font-size:13px;font-weight:600">Умеренный</div><div style="font-size:11px;color:var(--mu);margin-top:2px">Баланс риска и дохода ~14%/год — популярный выбор</div></div>
+          </div>
+          <div style="background:rgba(255,100,100,.08);border:1px solid rgba(255,100,100,.15);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px">
+            <div style="font-size:24px;flex-shrink:0">🚀</div>
+            <div><div style="font-size:13px;font-weight:600">Агрессивный</div><div style="font-size:11px;color:var(--mu);margin-top:2px">~18%/год. Доступно на тарифе Премиум</div></div>
+          </div>
         </div>
       </div>
-      <div style="background:rgba(255,100,100,0.08);border:1px solid rgba(255,100,100,0.15);border-radius:14px;padding:16px;display:flex;gap:14px;align-items:flex-start">
-        <div style="font-size:28px;flex-shrink:0">🎯</div>
-        <div>
-          <div style="font-weight:700;font-size:15px;margin-bottom:4px">Цель пассивного дохода</div>
-          <div style="color:var(--mu);font-size:13px;line-height:1.5">Поставь цель — например 150 000₽/мес — и следи как портфель к ней идёт</div>
-        </div>
+
+    </div>
+
+    <!-- Dots + Buttons -->
+    <div style="padding:16px 28px 32px;display:flex;flex-direction:column;align-items:center;gap:14px">
+      <div style="display:flex;gap:8px">
+        <div id="ob-dot-0" style="width:24px;height:6px;border-radius:3px;background:var(--green);transition:.3s"></div>
+        <div id="ob-dot-1" style="width:8px;height:6px;border-radius:3px;background:rgba(255,255,255,0.2);transition:.3s"></div>
+        <div id="ob-dot-2" style="width:8px;height:6px;border-radius:3px;background:rgba(255,255,255,0.2);transition:.3s"></div>
       </div>
+      <button id="ob-btn" onclick="obNext()" style="width:100%;max-width:360px;padding:15px;background:linear-gradient(135deg,var(--green),#00A882);border:none;border-radius:14px;color:#000;font-family:var(--serif);font-size:16px;font-weight:800;cursor:pointer">
+        Далее →
+      </button>
+      <span onclick="closeOnboard()" style="font-size:13px;color:var(--hi);cursor:pointer">Пропустить</span>
     </div>
 
-    <!-- First step hint -->
-    <div style="background:rgba(0,212,100,0.06);border:1px solid rgba(0,212,100,0.15);border-radius:12px;padding:14px;margin-bottom:20px;text-align:center">
-      <div style="font-size:12px;color:var(--mu);margin-bottom:4px">С чего начать?</div>
-      <div style="font-size:14px;font-weight:600">Перейди в <span style="color:var(--green)">Журнал</span> и добавь первый актив 📒</div>
-    </div>
-
-    <button onclick="closeOnboard()" style="width:100%;padding:16px;background:linear-gradient(135deg,var(--green),#00A882);border:none;border-radius:14px;color:#000;font-family:var(--serif);font-size:16px;font-weight:800;cursor:pointer;letter-spacing:.02em">
-      Начать →
-    </button>
-
-    <div style="text-align:center;margin-top:12px">
-      <span onclick="closeOnboard()" style="font-size:12px;color:var(--hi);cursor:pointer">Пропустить</span>
-    </div>
   </div>
 </div>
 
@@ -693,7 +720,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
         </div>
       </div>
       <div class="hdr-right">
-        <div class="ai-badge" id="ai-badge" onclick="switchTab('profile')" data-tip="⚡ Осталось AI-запросов. Каждый запрос — актуальные данные от нейросети">
+        <div class="ai-badge" id="ai-badge" onclick="switchTab('profile')">
           <div class="ai-dot"></div>
           <span class="ai-cnt" id="ai-cnt">—</span>
           <span style="color:var(--hi);font-size:10px">зап.</span>
@@ -702,9 +729,9 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
       </div>
     </div>
     <div class="sbar" id="sbar">
-      <div class="chip on" data-s="cons" onclick="setStrat('cons')" data-tip="🛡️ ОФЗ + дивиденды. Стабильный доход ~11%/год — идеально для начала инвестиций"><div class="dot" style="background:var(--green)"></div>Консерватор</div>
-      <div class="chip" data-s="mod" onclick="setStrat('mod')" data-tip="⚖️ Облигации + акции + фонды. Баланс риска и дохода ~14%/год — популярный выбор"><div class="dot" style="background:var(--blue)"></div>Умеренный</div>
-      <div class="chip" data-s="agg" onclick="setStrat('agg')" data-tip="🚀 Акции роста и высокодоходные бумаги ~18%/год. Доступно на тарифе Премиум"><div class="dot" style="background:var(--red)"></div>Агрессивный</div>
+      <div class="chip on" data-s="cons" onclick="setStrat('cons')"><div class="dot" style="background:var(--green)"></div>Консерватор</div>
+      <div class="chip" data-s="mod" onclick="setStrat('mod')"><div class="dot" style="background:var(--blue)"></div>Умеренный</div>
+      <div class="chip" data-s="agg" onclick="setStrat('agg')"><div class="dot" style="background:var(--red)"></div>Агрессивный</div>
     </div>
   </div>
 
@@ -727,10 +754,10 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
       <!-- Live AI -->
       <div class="stit"><span>⚡ Актуальные данные</span></div>
       <div class="live-row">
-        <div class="live-chip" onclick="askAI('q1')" data-tip="🤖 Новейший AI подберёт что купить именно под твою стратегию и бюджет прямо сейчас"><div class="live-chip-ic">📅</div><div class="live-chip-t">Что купить в <span id="lb-mon">мае</span></div><div class="live-dot"></div></div>
-        <div class="live-chip" onclick="askAI('q2')" data-tip="📈 AI покажет актуальную доходность ОФЗ — узнай где сейчас выгоднее всего"><div class="live-chip-ic">📋</div><div class="live-chip-t">Доходность ОФЗ</div><div class="live-dot"></div></div>
-        <div class="live-chip" onclick="askAI('q3')" data-tip="💰 Узнай какие компании платят дивиденды прямо сейчас и сколько можно заработать"><div class="live-chip-ic">💹</div><div class="live-chip-t">Дивиденды</div><div class="live-dot"></div></div>
-        <div class="live-chip" onclick="askAI('q4')" data-tip="🏦 Текущая ставка ЦБ напрямую влияет на доходность твоего портфеля — узнай прогноз"><div class="live-chip-ic">🏦</div><div class="live-chip-t">Ставка ЦБ</div><div class="live-dot"></div></div>
+        <div class="live-chip" onclick="askAI('q1')"><div class="live-chip-ic">📅</div><div class="live-chip-t">Что купить в <span id="lb-mon">мае</span></div><div class="live-dot"></div></div>
+        <div class="live-chip" onclick="askAI('q2')"><div class="live-chip-ic">📋</div><div class="live-chip-t">Доходность ОФЗ</div><div class="live-dot"></div></div>
+        <div class="live-chip" onclick="askAI('q3')"><div class="live-chip-ic">💹</div><div class="live-chip-t">Дивиденды</div><div class="live-dot"></div></div>
+        <div class="live-chip" onclick="askAI('q4')"><div class="live-chip-ic">🏦</div><div class="live-chip-t">Ставка ЦБ</div><div class="live-dot"></div></div>
       </div>
       <div class="ai-res" id="ai-res"></div>
 
@@ -791,7 +818,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
       <div class="proj" id="proj"></div>
 
       <!-- Goal -->
-      <div class="card" data-tip="🎯 Шкала показывает как далеко ты от цели пассивного дохода. Настрой цель в Профиле!">
+      <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
           <div class="card-lbl" style="margin-bottom:0">📈 До цели <span id="goal-disp" style="color:var(--sc)">—</span></div>
           <div style="font-size:12px;font-family:var(--mono);font-weight:600;color:var(--sc)" id="goal-pct">0%</div>
@@ -858,7 +885,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
       </div>
     </div>
     <div class="scroll" style="padding-top:12px">
-      <div class="add-btn" onclick="openAdd()" data-tip="➕ Добавь актив — AI автоматически найдёт доходность и заполнит данные"><span style="font-size:20px">＋</span><span>Добавить покупку</span></div>
+      <div class="add-btn" onclick="openAdd()"><span style="font-size:20px">＋</span><span>Добавить покупку</span></div>
       <div id="jlist"><div style="text-align:center;padding:36px 0;color:var(--hi);font-size:12px">Записей пока нет</div></div>
       <div class="discl" style="margin-top:8px">Доход рассчитывается по доходности каждого актива отдельно</div>
     </div>
@@ -1074,10 +1101,10 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
 
   <!-- TABS -->
   <div class="tabs">
-    <div class="tab on" id="tab-home" onclick="switchTab('home')" data-tip="🏠 Обзор портфеля, AI-советы и твой путь к финансовой цели"><div class="tab-ic">🏠</div><div class="tab-lb">Главная</div></div>
-    <div class="tab" id="tab-journal" onclick="switchTab('journal')" data-tip="📒 Добавляй активы — ОФЗ, акции, фонды. AI сам найдёт доходность!"><div class="tab-ic">📒</div><div class="tab-lb">Журнал</div></div>
-    <div class="tab" id="tab-analytics" onclick="switchTab('analytics')" data-tip="📊 Следи за ростом портфеля, сравнивай с рынком и строй прогнозы на 5 лет"><div class="tab-ic">📊</div><div class="tab-lb">Аналитика</div></div>
-    <div class="tab" id="tab-profile" onclick="switchTab('profile')" data-tip="👤 Настрой цель, бюджет, уведомления и выбери подходящий тариф"><div class="tab-ic">👤</div><div class="tab-lb">Профиль</div></div>
+    <div class="tab on" id="tab-home" onclick="switchTab('home')"><div class="tab-ic">🏠</div><div class="tab-lb">Главная</div></div>
+    <div class="tab" id="tab-journal" onclick="switchTab('journal')"><div class="tab-ic">📒</div><div class="tab-lb">Журнал</div></div>
+    <div class="tab" id="tab-analytics" onclick="switchTab('analytics')"><div class="tab-ic">📊</div><div class="tab-lb">Аналитика</div></div>
+    <div class="tab" id="tab-profile" onclick="switchTab('profile')"><div class="tab-ic">👤</div><div class="tab-lb">Профиль</div></div>
   </div>
 </div>
 
@@ -1291,7 +1318,7 @@ var PLANS=[
 ];
 var LEGAL={
   terms:'<h4>Условия использования ИнвестГид</h4>Редакция 01.05.2024.<br><br><h4>1. Общие положения</h4>ИнвестГид — образовательный сервис. Не является брокером или инвестиционным советником по ФЗ №39-ФЗ.<br><br><h4>2. Ответственность</h4>Сервис не несёт ответственности за инвестиционные решения пользователей. Не гарантирует доходность.<br><br><h4>3. Оплата</h4>Оплата по выбранному тарифу. Возврат по законодательству РФ.',
-  privacy:'<h4>Политика конфиденциальности</h4><p>Настоящая Политика конфиденциальности регулирует обработку персональных данных в соответствии с Федеральным законом №152-ФЗ «О персональных данных».</p><p><strong>Какие данные собираются:</strong> email-адрес, имя пользователя, данные портфеля (история покупок, настройки).</p><p><strong>Где хранятся:</strong> Данные хранятся на защищённых облачных серверах (Google Cloud) с шифрованием. Передача данных осуществляется по протоколу HTTPS.</p><p><strong>Передача третьим лицам:</strong> Данные не передаются третьим лицам, рекламным сетям или государственным органам без вашего согласия, за исключением случаев, предусмотренных законодательством РФ.</p><p><strong>AI-запросы:</strong> Тексты запросов обрабатываются через Anthropic API. Персональные данные (email, имя) не включаются в запросы.</p><p><strong>Удаление данных:</strong> Вы можете удалить аккаунт и все данные в разделе «Профиль» в любой момент.</p><p><strong>Соответствие законодательству:</strong> Соответствует требованиям ФЗ №152-ФЗ в части защиты персональных данных.</p>',
+  privacy:'<h4>Политика конфиденциальности</h4><p>Настоящая Политика конфиденциальности регулирует обработку персональных данных в соответствии с Федеральным законом №152-ФЗ «О персональных данных».</p><p><strong>Какие данные собираются:</strong> email-адрес, имя пользователя, данные портфеля (история покупок, настройки).</p><p><strong>Где хранятся:</strong> Данные хранятся на защищённых облачных серверах (Google Cloud) с шифрованием. Передача данных осуществляется по протоколу HTTPS.</p><p><strong>Кто имеет доступ:</strong> Данные доступны только вам и администрации сервиса — исключительно в целях технической поддержки и обеспечения работы приложения.</p><p><strong>Передача третьим лицам:</strong> Данные не передаются рекламным сетям или иным третьим лицам. Передача государственным органам возможна только на основании требований законодательства РФ.</p><p><strong>AI-запросы:</strong> Тексты запросов обрабатываются через Anthropic API. Персональные данные (email, имя) не включаются в запросы.</p><p><strong>Удаление данных:</strong> Вы можете удалить аккаунт и все данные в разделе «Профиль» в любой момент.</p><p><strong>Соответствие законодательству:</strong> Соответствует требованиям ФЗ №152-ФЗ.</p>',
   disclaimer:'<h4>Правовой дисклеймер</h4>Все материалы ИнвестГид носят образовательный характер. НЕ являются ИИР по ст. 6.1 ФЗ №39-ФЗ, инвестиционным советом, офертой или гарантией дохода. Инвестирование сопряжено с риском потери средств. Прошлые результаты не гарантируют будущих.'
 };
 
@@ -1471,7 +1498,9 @@ function doConsent(){
   R('scr-consent').classList.remove('on');
   // Показываем онбординг только при первой регистрации
   if(!U().onboardDone){
+    _obPage=0;
     R('scr-onboard').classList.add('on');
+    setTimeout(initObSlides,50);
   } else {
     startApp();
   }
@@ -1497,8 +1526,6 @@ function startApp(){
   updateAll();buildRecs();buildProj();buildPlans();initPP();updateAiCnt();
   // Загружаем API ключ из Firebase — работает на всех устройствах автоматически
   setTimeout(loadApiKeyFromFirebase, 800);
-  // Инициализируем подсказки
-  setTimeout(initTooltips, 1500);
   // Исправляем старые значения счётчиков AI
   setTimeout(fixAiCounters, 300);
   // Init EmailJS keys from admin config
@@ -2611,7 +2638,7 @@ function showLegal(type){
   var titles={terms:'Условия использования',privacy:'Конфиденциальность',disclaimer:'Дисклеймер'};
   var LEGAL={
     terms:'<h4>Условия использования ИнвестГид</h4>ИнвестГид — образовательный сервис. Не является брокером, инвестиционным советником по ФЗ №39-ФЗ. Все материалы носят образовательный характер.',
-    privacy:'<h4>Политика конфиденциальности</h4><p>Данные хранятся на защищённых облачных серверах (Google Cloud) с шифрованием HTTPS. Не передаются третьим лицам. Соответствует ФЗ №152-ФЗ. Удаление — в Профиле.</p>',
+    privacy:'<h4>Политика конфиденциальности</h4><p>Данные хранятся на защищённых облачных серверах (Google Cloud) с шифрованием HTTPS. Доступны только вам и администрации сервиса. Не передаются рекламным сетям. Соответствует ФЗ №152-ФЗ. Удаление — в Профиле.</p>',
     disclaimer:'<h4>Дисклеймер</h4>Материалы ИнвестГид НЕ являются ИИР по ст. 6.1 ФЗ №39-ФЗ. Инвестирование сопряжено с риском потери средств.'
   };
   var t=R('legal-t'),c=R('legal-c');
@@ -3230,60 +3257,55 @@ function checkGoalAchieved() {
   }
 }
 
-/* ═══ TOOLTIP SYSTEM ═══ */
-var _ttTimer=null;
-var _ttEl=null;
-var _isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-
-function initTooltips(){
-  // Находим все элементы с data-tip атрибутом
-  document.querySelectorAll('[data-tip]').forEach(function(el){
-    el.classList.add('tt');
-    // Создаём box
-    var box=document.createElement('div');
-    box.className='tt-box';
-    box.textContent=el.dataset.tip;
-    el.appendChild(box);
-
-    if(_isMobile){
-      // Телефон: долгое нажатие 1.5 сек
-      el.addEventListener('touchstart',function(e){
-        _ttTimer=setTimeout(function(){
-          box.classList.add('show');
-          _ttEl=box;
-        },1500);
-      },{passive:true});
-      el.addEventListener('touchend',function(){
-        clearTimeout(_ttTimer);
-        box.classList.remove('show');
-      });
-      el.addEventListener('touchmove',function(){
-        clearTimeout(_ttTimer);
-        box.classList.remove('show');
-      },{passive:true});
-    } else {
-      // Компьютер: наведение 3 сек
-      el.addEventListener('mouseenter',function(){
-        _ttTimer=setTimeout(function(){
-          box.classList.add('show');
-          _ttEl=box;
-        },3000);
-      });
-      el.addEventListener('mouseleave',function(){
-        clearTimeout(_ttTimer);
-        box.classList.remove('show');
-        _ttEl=null;
-      });
-    }
+/* ═══ ONBOARDING ═══ */
+var _obPage=0;
+function obNext(){
+  _obPage++;
+  if(_obPage>=3){closeOnboard();return;}
+  obGoTo(_obPage);
+}
+function obGoTo(n){
+  _obPage=n;
+  var slides=document.querySelectorAll('.ob-slide');
+  slides.forEach(function(s,i){
+    s.style.transform='translateX('+(i-n)*100+'%)';
   });
+  // Dots
+  for(var i=0;i<3;i++){
+    var d=R('ob-dot-'+i);
+    if(d){
+      d.style.width=i===n?'24px':'8px';
+      d.style.background=i===n?'var(--green)':'rgba(255,255,255,0.2)';
+    }
+  }
+  // Button text
+  var btn=R('ob-btn');
+  if(btn)btn.textContent=n===2?'Начать →':'Далее →';
+}
+function initObSlides(){
+  var slides=document.querySelectorAll('.ob-slide');
+  slides.forEach(function(s,i){
+    s.style.position='absolute';
+    s.style.top='0';s.style.left='0';s.style.right='0';s.style.bottom='0';
+    s.style.transition='transform .35s cubic-bezier(.4,0,.2,1)';
+    s.style.transform='translateX('+i*100+'%)';
+  });
+  var cont=R('ob-slides');
+  if(cont)cont.style.position='relative';
+  // Свайп
+  var startX=0;
+  if(cont){
+    cont.addEventListener('touchstart',function(e){startX=e.touches[0].clientX;},{passive:true});
+    cont.addEventListener('touchend',function(e){
+      var dx=e.changedTouches[0].clientX-startX;
+      if(Math.abs(dx)>50){
+        if(dx<0&&_obPage<2)obGoTo(_obPage+1);
+        else if(dx>0&&_obPage>0)obGoTo(_obPage-1);
+      }
+    });
+  }
 }
 
-// Запускаем после старта приложения
-document.addEventListener('DOMContentLoaded',function(){
-  setTimeout(initTooltips,2000);
-});
-// Также перезапускаем при переключении вкладок
-function reinitTooltips(){setTimeout(initTooltips,300);}
 var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
 var isInStandaloneMode=window.navigator.standalone===true;
 // Показываем подсказку для iOS
