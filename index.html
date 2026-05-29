@@ -594,7 +594,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
   <div class="cblk">
     <div class="cblk-t">🔒 Персональные данные (ФЗ №152-ФЗ)</div>
     <div class="cblk-b">
-      Данные (email, имя, история покупок) надёжно хранятся в защищённом облаке (Firebase). Не передаются третьим лицам, рекламным сетям или государственным органам. Вы можете удалить аккаунт и все данные в разделе Профиль — данные удаляются сразу и безвозвратно.
+      Данные (email, имя, история покупок) надёжно хранятся в защищённом облаке Firebase (серверы в ЕС). Не передаются третьим лицам, рекламным сетям или государственным органам. AI-запросы отправляются через Anthropic API без персональных данных. Удалить аккаунт и все данные можно в разделе Профиль. Соответствует ФЗ №152-ФЗ.
     </div>
   </div>
 
@@ -1813,12 +1813,18 @@ var AI_Q={
   q4:function(){return 'Ключевая ставка ЦБ РФ сейчас, прогноз. Что лучше — ОФЗ-ПД или флоатеры? Коротко.';}
 };
 function aiLeft(){
-  var lim=LIMITS[U().plan||'free'];
-  return Math.max(0,lim.ai+(U().aiExtra||0)+(U().aiRollover||0)-(U().aiUsed||0));
+  var plan=U().plan||'free';
+  var lim=LIMITS[plan].ai;
+  var extra=(plan==='free')?0:(U().aiExtra||0);
+  var rollover=Math.min(U().aiRollover||0,lim);
+  return Math.max(0,lim+extra+rollover-(U().aiUsed||0));
 }
 function aiTotal(){
-  var lim=LIMITS[U().plan||'free'];
-  return lim.ai+(U().aiExtra||0)+(U().aiRollover||0);
+  var plan=U().plan||'free';
+  var lim=LIMITS[plan].ai;
+  var extra=(plan==='free')?0:(U().aiExtra||0);
+  var rollover=Math.min(U().aiRollover||0,lim);
+  return lim+extra+rollover;
 }
 function resetMonth(){
   var m=new Date().toISOString().slice(0,7);
@@ -1841,20 +1847,23 @@ function fixAiCounters(){
   if(!curUser||!users[curUser])return;
   var u=users[curUser];
   var changed=false;
-  // Одноразовая миграция: сбрасываем aiExtra если не было реальных покупок
-  if(!u.aiMigrated_v4){
-    u.aiExtra=0;
-    u.aiMigrated_v4=true;
-    changed=true;
+  var plan=u.plan||'free';
+  var planLimit=LIMITS[plan].ai;
+  // Миграция v4: сбрасываем aiExtra
+  if(!u.aiMigrated_v4){u.aiExtra=0;u.aiMigrated_v4=true;changed=true;}
+  // Для бесплатного тарифа — aiExtra и aiRollover не могут быть больше planLimit
+  if(plan==='free'){
+    if((u.aiExtra||0)>0){u.aiExtra=0;changed=true;}
+    if((u.aiRollover||0)>planLimit){u.aiRollover=planLimit;changed=true;}
   }
-  // Сбрасываем счётчик если превышает лимит
-  var max=LIMITS[u.plan||'free'].ai+(u.aiExtra||0)+(u.aiRollover||0);
+  // Если счётчик использованных превышает максимум — сбрасываем
+  var max=planLimit+(u.aiExtra||0)+(u.aiRollover||0);
   if((u.aiUsed||0)>max){u.aiUsed=0;changed=true;}
   if(changed){
     sv('ig_users',users);
     if(typeof fbSaveUser==='function')fbSaveUser(curUser,users[curUser]);
     if(typeof updateAiCnt==='function')updateAiCnt();
-    console.log('[Fix v4] AI счётчик обновлён, план:',u.plan);
+    console.log('[Fix v5] AI счётчик обновлён, план:',plan,'лимит:',planLimit);
   }
 }
 function updateAiCnt(){
