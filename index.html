@@ -1098,7 +1098,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
   <div style="font-size:44px;margin-bottom:12px" id="up-ic">🔒</div>
   <div style="font-family:var(--serif);font-size:18px;font-weight:700;margin-bottom:8px" id="up-t">Недоступно</div>
   <div style="font-size:13px;color:var(--mu);line-height:1.6;margin-bottom:18px" id="up-txt">Доступно на платных тарифах</div>
-  <button onclick="R('m-up').classList.remove('on');switchTab('profile')" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--green),#00A882);border:none;border-radius:10px;color:#000;font-family:var(--serif);font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">Выбрать тариф →</button>
+  <button onclick="goToPlans()" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--green),#00A882);border:none;border-radius:10px;color:#000;font-family:var(--serif);font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">Выбрать тариф →</button>
   <button onclick="R('m-up').classList.remove('on')" style="width:100%;padding:11px;border:none;background:transparent;color:var(--mu);font-family:var(--serif);font-size:13px;cursor:pointer">Позже</button>
 </div>
 </div>
@@ -1208,7 +1208,7 @@ var SC={
 
 /* ════ PLANS ════ */
 var LIMITS={
-  free:    {journal:false,analytics:false,ai:0,   strats:['cons'],            forecast:false, analytics_ext:false},
+  free:    {journal:true, analytics:false,ai:2,   strats:['cons'],            forecast:false, analytics_ext:false},
   base:    {journal:true, analytics:true, ai:5,   strats:['cons','mod'],       forecast:true,  analytics_ext:false},
   pro:     {journal:true, analytics:true, ai:30,  strats:['cons','mod'],       forecast:true,  analytics_ext:true},
   premium: {journal:true, analytics:true, ai:50, strats:['cons','mod','agg'], forecast:true,  analytics_ext:true}
@@ -1216,12 +1216,12 @@ var LIMITS={
 var PLANS=[
   {id:'free',n:'Бесплатно',pr:{month:0,half:0,year:0},
    ft:[
+     {ok:true, t:'Журнал покупок (без ограничений)'},
+     {ok:true, t:'2 AI-запроса в месяц'},
      {ok:true, t:'Стратегия Консерватор'},
-     {ok:true, t:'Образовательный прогноз'},
      {ok:true, t:'Образовательные материалы'},
-     {ok:false,t:'Журнал покупок'},
-     {ok:false,t:'Аналитика'},
-     {ok:false,t:'AI-запросы'}
+     {ok:false,t:'Аналитика портфеля'},
+     {ok:false,t:'Прогноз и персональный план'}
    ]},
   {id:'base',n:'Старт',pr:{month:490,half:407,year:368},badge:'',
    ft:[
@@ -1252,7 +1252,7 @@ var PLANS=[
 ];
 var LEGAL={
   terms:'<h4>Условия использования ИнвестГид</h4>Редакция 01.05.2024.<br><br><h4>1. Общие положения</h4>ИнвестГид — образовательный сервис. Не является брокером или инвестиционным советником по ФЗ №39-ФЗ.<br><br><h4>2. Ответственность</h4>Сервис не несёт ответственности за инвестиционные решения пользователей. Не гарантирует доходность.<br><br><h4>3. Оплата</h4>Оплата по выбранному тарифу. Возврат по законодательству РФ.',
-  privacy:'<h4>Конфиденциальность</h4>Данные (email, имя, записи) хранятся локально (localStorage). Не передаются на серверы. AI-запросы отправляются через Anthropic API без персональных данных. Удаление — в Профиле. Соответствует ФЗ №152-ФЗ.',
+  privacy:'<h4>Конфиденциальность</h4>Данные (email, имя, история покупок) надёжно хранятся в защищённом облаке Firebase (серверы в ЕС). Не передаются третьим лицам, рекламным сетям и государственным органам. AI-запросы отправляются через Anthropic API без персональных данных. Удалить аккаунт и все данные можно в разделе Профиль. Соответствует ФЗ №152-ФЗ.',
   disclaimer:'<h4>Правовой дисклеймер</h4>Все материалы ИнвестГид носят образовательный характер. НЕ являются ИИР по ст. 6.1 ФЗ №39-ФЗ, инвестиционным советом, офертой или гарантией дохода. Инвестирование сопряжено с риском потери средств. Прошлые результаты не гарантируют будущих.'
 };
 
@@ -1516,31 +1516,41 @@ function fbLoadUser(email,cb){
 }
 
 /* ─── Регистрация через Firebase Auth ─── */
+function fbErrRu(e){
+  // Переводим ВСЕ коды ошибок Firebase на русский — ни одной английской строки
+  var map={
+    'auth/email-already-in-use':'Email уже зарегистрирован',
+    'auth/weak-password':'Пароль слишком простой (минимум 6 символов)',
+    'auth/invalid-email':'Некорректный формат email',
+    'auth/user-not-found':'Пользователь с таким email не найден',
+    'auth/wrong-password':'Неверный пароль',
+    'auth/too-many-requests':'Слишком много попыток. Подождите несколько минут.',
+    'auth/network-request-failed':'Нет соединения с интернетом',
+    'auth/user-disabled':'Аккаунт заблокирован. Обратитесь в поддержку.',
+    'auth/operation-not-allowed':'Способ входа недоступен',
+    'auth/invalid-credential':'Неверный email или пароль',
+    'auth/missing-password':'Введите пароль',
+    'auth/missing-email':'Введите email',
+    'auth/popup-closed-by-user':'Окно входа было закрыто',
+    'auth/requires-recent-login':'Требуется повторный вход в аккаунт',
+    'auth/expired-action-code':'Ссылка устарела. Запросите новую.',
+    'auth/invalid-action-code':'Неверная или уже использованная ссылка'
+  };
+  return map[e.code]||'Произошла ошибка. Попробуйте ещё раз.';
+}
 function fbRegister(email,pass,onOk,onErr){
-  if(!fbAuth){if(onErr)onErr('Firebase недоступен');return;}
+  if(!fbAuth){if(onErr)onErr('Сервис временно недоступен');return;}
   fbAuth.createUserWithEmailAndPassword(email,pass)
     .then(function(cred){fbUser=cred.user;if(onOk)onOk(cred.user);})
-    .catch(function(e){
-      var msg='Ошибка регистрации';
-      if(e.code==='auth/email-already-in-use')msg='Email уже зарегистрирован';
-      else if(e.code==='auth/weak-password')msg='Пароль слишком простой (мин. 6 символов)';
-      else if(e.code==='auth/invalid-email')msg='Некорректный email';
-      if(onErr)onErr(msg);
-    });
+    .catch(function(e){if(onErr)onErr(fbErrRu(e));});
 }
 
 /* ─── Вход через Firebase Auth ─── */
 function fbLogin(email,pass,onOk,onErr){
-  if(!fbAuth){if(onErr)onErr('Firebase недоступен');return;}
+  if(!fbAuth){if(onErr)onErr('Сервис временно недоступен');return;}
   fbAuth.signInWithEmailAndPassword(email,pass)
     .then(function(cred){fbUser=cred.user;if(onOk)onOk(cred.user);})
-    .catch(function(e){
-      var msg='Неверный email или пароль';
-      if(e.code==='auth/user-not-found')msg='Пользователь не найден';
-      else if(e.code==='auth/wrong-password')msg='Неверный пароль';
-      else if(e.code==='auth/too-many-requests')msg='Слишком много попыток. Подождите.';
-      if(onErr)onErr(msg);
-    });
+    .catch(function(e){if(onErr)onErr(fbErrRu(e));});
 }
 
 /* ─── Загрузка API ключа из Firebase ─── */
@@ -1571,7 +1581,7 @@ function fbResetPassword(email,onOk,onErr){
   if(!fbAuth){if(onErr)onErr('Firebase недоступен');return;}
   fbAuth.sendPasswordResetEmail(email)
     .then(function(){if(onOk)onOk();})
-    .catch(function(e){if(onErr)onErr('Ошибка: '+e.message);});
+    .catch(function(e){if(onErr)onErr(fbErrRu(e));});
 }
 
 /* ─── Автовход при открытии приложения ─── */
@@ -1843,10 +1853,8 @@ function fixAiCounters(){
   }
 }
 function updateAiCnt(){
-  var plan=U().plan||'free';
   var badge=R('ai-badge'),cnt=R('ai-cnt');
   if(!badge||!cnt)return;
-  if(plan==='free'){badge.classList.remove('show');return;}
   resetMonth();
   var left=aiLeft(),total=aiTotal();
   badge.classList.add('show');
@@ -1858,10 +1866,13 @@ async function askAI(qid){
   if(aiLoading)return;
   resetMonth();
   var plan=U().plan||'free';
-  if(plan==='free'){showUpsell('ai');return;}
   if(aiLeft()<=0){
     R('up-ic').textContent='⏱️';R('up-t').textContent='Лимит запросов исчерпан';
-    R('up-txt').innerHTML='На тарифе '+U().plan+' '+LIMITS[plan].ai+' запросов/мес.<br>Обновится в следующем месяце или купи доп. пакет.';
+    if(plan==='free'){
+      R('up-txt').innerHTML='На бесплатном тарифе 2 запроса в месяц.<br>Подключи Старт — 5 запросов, или Про — 30 запросов.';
+    }else{
+      R('up-txt').innerHTML='На тарифе '+U().plan+' '+LIMITS[plan].ai+' запросов/мес.<br>Обновится в следующем месяце или купи доп. пакет.';
+    }
     R('m-up').classList.add('on');return;
   }
   var key=lv('ig_admin',{}).key||adminCfg.key||'';
@@ -2389,6 +2400,22 @@ function confirmDo(yes){
   if(yes&&_confirmCb)_confirmCb();_confirmCb=null;
 }
 
+function goToPlans(){
+  // Закрываем upsell, идём в профиль и скроллим к блоку тарифов
+  var mo=R('m-up');if(mo)mo.classList.remove('on');
+  switchTab('profile');
+  // Небольшая задержка чтобы страница успела отрисоваться
+  setTimeout(function(){
+    var plansEl=R('plans-wrap')||R('ptog');
+    if(plansEl){
+      plansEl.scrollIntoView({behavior:'smooth',block:'start'});
+    }else{
+      // Если элемент не найден — скроллим страницу вниз
+      var page=R('page-profile');
+      if(page)page.scrollTop=page.scrollHeight;
+    }
+  },150);
+}
 function showUpsell(feature){
   var cfg={
     journal:{icon:'📒',title:'Журнал покупок',text:'Доступно с тарифа Старт — 490 ₽/мес'},
@@ -2528,7 +2555,7 @@ function showLegal(type){
   var titles={terms:'Условия использования',privacy:'Конфиденциальность',disclaimer:'Дисклеймер'};
   var LEGAL={
     terms:'<h4>Условия использования ИнвестГид</h4>ИнвестГид — образовательный сервис. Не является брокером, инвестиционным советником по ФЗ №39-ФЗ. Все материалы носят образовательный характер.',
-    privacy:'<h4>Конфиденциальность</h4>Данные хранятся локально на устройстве (localStorage). Не передаются третьим лицам. Соответствует ФЗ №152-ФЗ.',
+    privacy:'<h4>Конфиденциальность</h4>Данные (email, имя, история покупок) надёжно хранятся в защищённом облаке Firebase (серверы в ЕС). Не передаются третьим лицам, рекламным сетям и государственным органам. AI-запросы отправляются через Anthropic API без персональных данных. Удалить аккаунт и все данные можно в разделе Профиль. Соответствует ФЗ №152-ФЗ.',
     disclaimer:'<h4>Дисклеймер</h4>Материалы ИнвестГид НЕ являются ИИР по ст. 6.1 ФЗ №39-ФЗ. Инвестирование сопряжено с риском потери средств.'
   };
   var t=R('legal-t'),c=R('legal-c');
