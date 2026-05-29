@@ -61,10 +61,9 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
 .ld-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));animation:fill 1.4s ease forwards}
 @keyframes fill{to{width:100%}}
 
-/* SCREENS */
+/* SCREENS (auth/consent) */
 .screen{position:fixed;inset:0;background:linear-gradient(135deg,#0d1117 0%,#0d2e1a 40%,#1a3a0d 70%,#0f2a1a 100%);z-index:100;display:none;overflow-y:auto}
 .screen.on{display:block}
-#scr-onboard.on{display:flex!important;align-items:center;justify-content:center}
 .sw{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px}
 
 /* AUTH */
@@ -542,7 +541,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
   <div class="cblk">
     <div class="cblk-t">🔒 Персональные данные (ФЗ №152-ФЗ)</div>
     <div class="cblk-b">
-      Данные хранятся на защищённых облачных серверах (Google Cloud) с шифрованием. Соответствует требованиям ФЗ №152-ФЗ в части защиты данных.
+      Данные (email, имя, история покупок) хранятся <strong>локально на вашем устройстве</strong> (localStorage). Не передаются третьим лицам, рекламным сетям или государственным органам. Вы можете удалить аккаунт и все данные в Профиле в любой момент. При удалении приложения все данные удаляются автоматически.
     </div>
   </div>
 
@@ -586,130 +585,10 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
   <button class="cbtn" id="cbtn" onclick="doConsent()" style="position:relative;overflow:hidden">Подтвердить и начать →</button>
 
   <div style="font-size:10px;color:rgba(255,255,255,0.25);text-align:center;margin-top:12px;line-height:1.7">
-    ООО «ИнвестГид» · ОГРН xxxxxxxxx<br>
-    По вопросам: support@investgid.ru
+    ИнвестГид — образовательный сервис<br>
+    По вопросам: <a href="mailto:support@investgid.ru" style="color:rgba(0,212,100,0.5)">support@investgid.ru</a>
   </div>
 </div>
-</div>
-
-<!-- ONBOARDING SCREEN -->
-<div class="screen" id="scr-onboard" style="background:rgba(0,0,0,0.75)">
-  <div style="background:linear-gradient(160deg,#0d2e1a,#0d1117);border:1px solid rgba(0,212,100,0.2);border-radius:24px;width:92%;max-width:400px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.6);position:relative">
-
-    <!-- Slides wrapper -->
-    <div id="ob-slides" style="height:420px;overflow:hidden;position:relative">
-
-      <!-- Страница 1 — Журнал и главная -->
-      <div class="ob-slide" style="position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;padding:28px 20px 12px;transition:transform .35s cubic-bezier(.4,0,.2,1)">
-        <div style="text-align:center;margin-bottom:18px">
-          <div style="font-size:48px;margin-bottom:8px">📱</div>
-          <div style="font-family:var(--serif);font-size:21px;font-weight:800;margin-bottom:4px">Твой помощник<br>по инвестициям</div>
-          <div style="color:var(--mu);font-size:12px">Что умеет ИнвестГид</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:11px">
-            <div style="font-size:22px;flex-shrink:0">🏠</div>
-            <div><div style="font-size:13px;font-weight:600">Главная</div><div style="font-size:11px;color:var(--mu);margin-top:1px">Обзор портфеля, AI-советы и путь к цели</div></div>
-          </div>
-          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:11px">
-            <div style="font-size:22px;flex-shrink:0">📒</div>
-            <div><div style="font-size:13px;font-weight:600">Журнал покупок</div><div style="font-size:11px;color:var(--mu);margin-top:1px">Записывай активы — ОФЗ, акции, фонды</div></div>
-          </div>
-          <div style="background:rgba(0,212,100,.08);border:1px solid rgba(0,212,100,.2);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:11px">
-            <div style="font-size:22px;flex-shrink:0">➕</div>
-            <div><div style="font-size:13px;font-weight:600">Добавить актив</div><div style="font-size:11px;color:var(--mu);margin-top:1px">Введи название и кол-во — AI сам найдёт текущую доходность из открытых источников</div></div>
-          </div>
-          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:11px">
-            <div style="font-size:22px;flex-shrink:0">🎯</div>
-            <div><div style="font-size:13px;font-weight:600">Шкала цели</div><div style="font-size:11px;color:var(--mu);margin-top:1px">Показывает путь к цели пассивного дохода</div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Страница 2 — AI кнопки -->
-      <div class="ob-slide" style="position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;padding:28px 20px 12px;transition:transform .35s cubic-bezier(.4,0,.2,1);transform:translateX(100%)">
-        <div style="text-align:center;margin-bottom:18px">
-          <div style="font-size:48px;margin-bottom:8px">🤖</div>
-          <div style="font-family:var(--serif);font-size:21px;font-weight:800;margin-bottom:4px">AI-советы<br>в один клик</div>
-          <div style="color:var(--mu);font-size:12px">Актуальные данные от нейросети Claude</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="background:rgba(0,212,100,.08);border:1px solid rgba(0,212,100,.2);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:11px">
-            <div style="font-size:22px;flex-shrink:0">⚡</div>
-            <div><div style="font-size:13px;font-weight:600">Счётчик AI-запросов</div><div style="font-size:11px;color:var(--mu);margin-top:1px">Показывает сколько запросов осталось в этом месяце</div></div>
-          </div>
-          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:11px">
-            <div style="font-size:22px;flex-shrink:0">🛒</div>
-            <div><div style="font-size:13px;font-weight:600">Что купить</div><div style="font-size:11px;color:var(--mu);margin-top:1px">AI подберёт что купить под твою стратегию и бюджет</div></div>
-          </div>
-          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:11px">
-            <div style="font-size:22px;flex-shrink:0">📈</div>
-            <div><div style="font-size:13px;font-weight:600">Доходность ОФЗ</div><div style="font-size:11px;color:var(--mu);margin-top:1px">Актуальные ставки — узнай где выгоднее вложить</div></div>
-          </div>
-          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:11px">
-            <div style="font-size:22px;flex-shrink:0">💰</div>
-            <div><div style="font-size:13px;font-weight:600">Дивиденды</div><div style="font-size:11px;color:var(--mu);margin-top:1px">Какие компании платят дивиденды прямо сейчас</div></div>
-          </div>
-          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:11px">
-            <div style="font-size:22px;flex-shrink:0">🏦</div>
-            <div><div style="font-size:13px;font-weight:600">Ставка ЦБ</div><div style="font-size:11px;color:var(--mu);margin-top:1px">Влияет на доходность портфеля — следи за изменениями</div></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Страница 3 — Аналитика и стратегии -->
-      <div class="ob-slide" style="position:absolute;inset:0;overflow-y:auto;scrollbar-width:none;padding:28px 20px 12px;transition:transform .35s cubic-bezier(.4,0,.2,1);transform:translateX(200%)">
-        <div style="text-align:center;margin-bottom:18px">
-          <div style="font-size:48px;margin-bottom:8px">📊</div>
-          <div style="font-family:var(--serif);font-size:21px;font-weight:800;margin-bottom:4px">Аналитика<br>и стратегии</div>
-          <div style="color:var(--mu);font-size:12px">Следи за ростом и выбери стратегию</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:11px">
-            <div style="font-size:22px;flex-shrink:0">📊</div>
-            <div><div style="font-size:13px;font-weight:600">Аналитика</div><div style="font-size:11px;color:var(--mu);margin-top:1px">Прогнозы на 1, 3 и 5 лет вперёд</div></div>
-          </div>
-          <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:11px">
-            <div style="font-size:22px;flex-shrink:0">👤</div>
-            <div><div style="font-size:13px;font-weight:600">Профиль</div><div style="font-size:11px;color:var(--mu);margin-top:1px">Настрой цель, бюджет, уведомления и тариф</div></div>
-          </div>
-          <div style="background:rgba(0,212,100,.08);border:1px solid rgba(0,212,100,.2);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:11px">
-            <div style="font-size:22px;flex-shrink:0">🛡️</div>
-            <div><div style="font-size:13px;font-weight:600">Консерватор</div><div style="font-size:11px;color:var(--mu);margin-top:1px">ОФЗ + дивиденды. Стабильный ~11%/год</div></div>
-          </div>
-          <div style="background:rgba(108,143,255,.08);border:1px solid rgba(108,143,255,.2);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:11px">
-            <div style="font-size:22px;flex-shrink:0">⚖️</div>
-            <div><div style="font-size:13px;font-weight:600">Умеренный</div><div style="font-size:11px;color:var(--mu);margin-top:1px">Облигации + акции + фонды. ~14%/год</div></div>
-          </div>
-          <div style="background:rgba(255,100,100,.08);border:1px solid rgba(255,100,100,.2);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:11px">
-            <div style="font-size:22px;flex-shrink:0">🚀</div>
-            <div><div style="font-size:13px;font-weight:600">Агрессивный</div><div style="font-size:11px;color:var(--mu);margin-top:1px">Акции роста ~18%/год — доступно на Премиум</div></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Dots + Кнопки -->
-    <div style="padding:12px 20px 24px;display:flex;flex-direction:column;align-items:center;gap:10px;border-top:1px solid rgba(255,255,255,0.06)">
-      <!-- Dots -->
-      <div style="display:flex;gap:7px;margin-bottom:2px">
-        <div id="ob-dot-0" style="width:24px;height:5px;border-radius:3px;background:var(--green);transition:.3s"></div>
-        <div id="ob-dot-1" style="width:8px;height:5px;border-radius:3px;background:rgba(255,255,255,0.2);transition:.3s"></div>
-        <div id="ob-dot-2" style="width:8px;height:5px;border-radius:3px;background:rgba(255,255,255,0.2);transition:.3s"></div>
-      </div>
-      <!-- Главная кнопка -->
-      <button id="ob-btn" onclick="obNext()" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--green),#00A882);border:none;border-radius:13px;color:#000;font-family:var(--serif);font-size:15px;font-weight:800;cursor:pointer">
-        Далее →
-      </button>
-      <!-- Нижняя строка: Назад | Пропустить -->
-      <div style="display:flex;justify-content:space-between;width:100%;align-items:center">
-        <span id="ob-back-btn" onclick="obBack()" style="font-size:12px;color:var(--hi);cursor:pointer;opacity:0;transition:.2s">← Назад</span>
-        <span onclick="closeOnboard()" style="font-size:12px;color:var(--hi);cursor:pointer">Пропустить</span>
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <!-- APP -->
@@ -1204,7 +1083,7 @@ html,body{height:100%;font-family:var(--sans);background:var(--bg);color:var(--t
   </div>
   <div style="display:flex;gap:4px;background:var(--bg);border-radius:10px;padding:3px;margin-bottom:16px">
     <button class="adtab on" id="adt-api" onclick="adTab('api')">API Ключ</button>
-    <button class="adtab" id="adt-users" onclick="adTab('users')">Пользователи</button>
+    <button class="adtab" id="adt-users" onclick="adTab('users')">Юзеры</button>
     <button class="adtab" id="adt-stats" onclick="adTab('stats')">Статистика</button>
     <button class="adtab" id="adt-test" onclick="adTab('test')">Тест</button>
   </div>
@@ -1325,7 +1204,7 @@ var PLANS=[
 ];
 var LEGAL={
   terms:'<h4>Условия использования ИнвестГид</h4>Редакция 01.05.2024.<br><br><h4>1. Общие положения</h4>ИнвестГид — образовательный сервис. Не является брокером или инвестиционным советником по ФЗ №39-ФЗ.<br><br><h4>2. Ответственность</h4>Сервис не несёт ответственности за инвестиционные решения пользователей. Не гарантирует доходность.<br><br><h4>3. Оплата</h4>Оплата по выбранному тарифу. Возврат по законодательству РФ.',
-  privacy:'<h4>Политика конфиденциальности</h4><p>Настоящая Политика конфиденциальности регулирует обработку персональных данных в соответствии с Федеральным законом №152-ФЗ «О персональных данных».</p><p><strong>Какие данные собираются:</strong> email-адрес, имя пользователя, данные портфеля (история покупок, настройки).</p><p><strong>Где хранятся:</strong> Данные хранятся на защищённых облачных серверах (Google Cloud) с шифрованием. Передача данных осуществляется по протоколу HTTPS.</p><p><strong>Кто имеет доступ:</strong> Данные доступны только вам и администрации сервиса — исключительно в целях технической поддержки и обеспечения работы приложения.</p><p><strong>Передача третьим лицам:</strong> Данные не передаются рекламным сетям или иным третьим лицам. Передача государственным органам возможна только на основании требований законодательства РФ.</p><p><strong>AI-запросы:</strong> Тексты запросов обрабатываются через Anthropic API. Персональные данные (email, имя) не включаются в запросы.</p><p><strong>Удаление данных:</strong> Вы можете удалить аккаунт и все данные в разделе «Профиль» в любой момент.</p><p><strong>Соответствие законодательству:</strong> Соответствует требованиям ФЗ №152-ФЗ.</p>',
+  privacy:'<h4>Конфиденциальность</h4>Данные (email, имя, записи) хранятся локально (localStorage). Не передаются на серверы. AI-запросы отправляются через Anthropic API без персональных данных. Удаление — в Профиле. Соответствует ФЗ №152-ФЗ.',
   disclaimer:'<h4>Правовой дисклеймер</h4>Все материалы ИнвестГид носят образовательный характер. НЕ являются ИИР по ст. 6.1 ФЗ №39-ФЗ, инвестиционным советом, офертой или гарантией дохода. Инвестирование сопряжено с риском потери средств. Прошлые результаты не гарантируют будущих.'
 };
 
@@ -1365,10 +1244,16 @@ setTimeout(function(){
         curUser=e;sv('ig_session',e);
         fbLoadUser(e,function(cloudData){
           if(cloudData){
-            // Firebase всегда главный — полностью заменяем локальные данные
+            // Сливаем: берём облачные данные, но если локальные новее по consented — оставляем
+            var localConsented=users[e]&&users[e].consented;
             users[e]=cloudData;
+            // Если пользователь уже давал согласие локально, сохраняем это
+            if(localConsented&&!cloudData.consented){
+              users[e].consented=true;
+              fbSaveUser(e,users[e]); // синхронизируем обратно
+            }
             sv('ig_users',users);
-            console.log('[Firebase] автовход, план:',cloudData.plan);
+            console.log('[Firebase] автовход, план:',cloudData.plan,'consented:',users[e].consented);
           }else if(!users[e]){
             users[e]={name:e.split('@')[0],consented:false,photo:'',budget:0,goal:100000,strat:'cons',purchases:[],plan:'free',aiUsed:0,aiExtra:0,aiRollover:0,aiMonth:''};
             sv('ig_users',users);
@@ -1466,8 +1351,6 @@ function doAuth(){
         }else if(!users[e]){
           users[e]={name:e.split('@')[0],consented:false,photo:'',budget:0,goal:100000,strat:'cons',purchases:[],plan:'free',aiUsed:0,aiExtra:0,aiRollover:0,aiMonth:''};
           sv('ig_users',users);
-          // Сохраняем нового пользователя в Firestore чтобы он был виден в админке
-          fbSaveUser(e,users[e]);
         }
         restoreBtn();
         if(!users[e].consented){R('scr-auth').classList.remove('on');R('scr-consent').classList.add('on');}
@@ -1501,21 +1384,9 @@ function doConsent(){
   if(!cbState[1]||!cbState[2]||!cbState[3]||!cbState[4]||!cbState[5]){toast('Необходимо подтвердить все 5 пунктов');return}
   U().consented=true;U().consentDate=new Date().toISOString();
   sv('ig_users',users);
-  if(typeof fbSaveUser==='function')fbSaveUser(curUser,U());
-  R('scr-consent').classList.remove('on');
-  // Показываем онбординг только при первой регистрации
-  if(!U().onboardDone){
-    _obPage=0;
-    R('scr-onboard').classList.add('on');
-    setTimeout(initObSlides,50);
-  } else {
-    startApp();
-  }
-}
-function closeOnboard(){
-  U().onboardDone=true;sU();
-  var ob=R('scr-onboard');if(ob)ob.classList.remove('on');
-  startApp();
+  // Обязательно сохраняем в Firebase чтобы при следующем входе не показывало согласие снова
+  if(typeof fbSaveUser==='function')fbSaveUser(curUser,users[curUser]);
+  R('scr-consent').classList.remove('on');startApp();
 }
 
 /* ════ APP START ════ */
@@ -1880,27 +1751,33 @@ var AI_Q={
 };
 function aiLeft(){
   var lim=LIMITS[U().plan||'free'];
-  return Math.max(0,lim.ai+(U().aiExtra||0)-(U().aiUsed||0));
+  return Math.max(0,lim.ai+(U().aiExtra||0)+(U().aiRollover||0)-(U().aiUsed||0));
 }
 function aiTotal(){
   var lim=LIMITS[U().plan||'free'];
-  return lim.ai+(U().aiExtra||0);
+  return lim.ai+(U().aiExtra||0)+(U().aiRollover||0);
 }
 function resetMonth(){
-  var m=NOW.toISOString().slice(0,7);
+  var m=new Date().toISOString().slice(0,7);
   if(U().aiMonth!==m){
-    U().aiRollover=0; // полностью убираем rollover
+    // Rollover: переносим неиспользованные запросы, но не больше лимита тарифа
+    var lim=LIMITS[U().plan||'free'].ai;
+    var used=U().aiUsed||0;
+    var leftover=Math.max(0,lim-used);
+    var prevRollover=U().aiRollover||0;
+    // Суммируем rollover, но ограничиваем одним лимитом тарифа
+    var newRollover=Math.min(leftover+prevRollover,lim);
+    U().aiRollover=newRollover;
     U().aiUsed=0;
     U().aiMonth=m;
     sU();
+    if(newRollover>0)toast('🎁 Перенесено '+newRollover+' AI-запросов с прошлого месяца!');
   }
 }
 function fixAiCounters(){
   if(!curUser||!users[curUser])return;
   var u=users[curUser];
   var changed=false;
-  // Сбрасываем rollover полностью
-  if((u.aiRollover||0)!==0){u.aiRollover=0;changed=true;}
   // Одноразовая миграция: сбрасываем aiExtra если не было реальных покупок
   if(!u.aiMigrated_v4){
     u.aiExtra=0;
@@ -1908,13 +1785,13 @@ function fixAiCounters(){
     changed=true;
   }
   // Сбрасываем счётчик если превышает лимит
-  var max=LIMITS[u.plan||'free'].ai+(u.aiExtra||0);
+  var max=LIMITS[u.plan||'free'].ai+(u.aiExtra||0)+(u.aiRollover||0);
   if((u.aiUsed||0)>max){u.aiUsed=0;changed=true;}
   if(changed){
     sv('ig_users',users);
     if(typeof fbSaveUser==='function')fbSaveUser(curUser,users[curUser]);
     if(typeof updateAiCnt==='function')updateAiCnt();
-    console.log('[Fix v4] AI сброшен, план:',u.plan,'макс:',LIMITS[u.plan||'free'].ai);
+    console.log('[Fix v4] AI счётчик обновлён, план:',u.plan);
   }
 }
 function updateAiCnt(){
@@ -1954,57 +1831,16 @@ async function askAI(qid){
         messages:[{role:'user',content:AI_Q[qid]?AI_Q[qid]():'Расскажи кратко об инвестициях.'}],
         tools:[{type:'web_search_20250305',name:'web_search'}]})});
     var d=await resp.json();
-    if(d.error){res.innerHTML='<div style="color:var(--red);font-size:12px">'+translateApiError(d.error)+'</div>';}
+    if(d.error){res.innerHTML='<div style="color:var(--red);font-size:12px">⚠️ '+d.error.message+'</div>';}
     else{
       var txt=(d.content||[]).filter(function(b){return b.type==='text'}).map(function(b){return b.text}).join('');
       res.innerHTML='<div class="ai-tag"><div class="ai-dot"></div>Актуальные данные</div>'+fmtAI(txt);
       U().aiUsed=(U().aiUsed||0)+1;sU();
     }
-  }catch(e){res.innerHTML='<div style="color:var(--red);font-size:12px">'+translateApiError(e)+'</div>';}
+  }catch(e){res.innerHTML='<div style="color:var(--red);font-size:12px">⚠️ '+e.message+'</div>';}
   aiLoading=false;updateAiCnt();
 }
 function fmtAI(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}
-
-/* ─── Перевод ошибок API на русский ─── */
-function translateApiError(err){
-  if(!err)return 'Неизвестная ошибка';
-  var msg=err.message||err.toString();
-  var type=err.type||'';
-  // Rate limit
-  if(msg.includes('rate limit')||msg.includes('rate_limit')||type==='rate_limit_error'){
-    return '⏳ Слишком много запросов. Подождите 1 минуту и попробуйте снова.';
-  }
-  // Overloaded
-  if(msg.includes('overloaded')||type==='overloaded_error'){
-    return '⏳ Сервис временно перегружен. Попробуйте через минуту.';
-  }
-  // Auth error
-  if(msg.includes('authentication')||msg.includes('auth')||type==='authentication_error'||msg.includes('invalid x-api-key')){
-    return '🔑 Ошибка доступа к AI. Обратитесь к администратору.';
-  }
-  // Token limit
-  if(msg.includes('max_tokens')||msg.includes('token')){
-    return '📝 Запрос слишком длинный. Попробуйте ещё раз.';
-  }
-  // Network error
-  if(msg.includes('Failed to fetch')||msg.includes('NetworkError')||msg.includes('network')){
-    return '📡 Нет соединения с интернетом. Проверьте подключение.';
-  }
-  // Timeout
-  if(msg.includes('timeout')||msg.includes('AbortError')){
-    return '⌛ Сервер не ответил вовремя. Попробуйте ещё раз.';
-  }
-  // Forbidden / permission
-  if(msg.includes('permission')||msg.includes('forbidden')||msg.includes('403')){
-    return '🔒 Нет доступа к AI. Обратитесь к администратору.';
-  }
-  // 529 overload
-  if(msg.includes('529')||msg.includes('529')){
-    return '⏳ Высокая нагрузка на сервис. Попробуйте через минуту.';
-  }
-  // Generic fallback
-  return '⚠️ Ошибка AI-сервиса. Попробуйте ещё раз.';
-}
 
 /* ════ PERSONAL PLAN ════ */
 function initPP(){
@@ -2043,7 +1879,7 @@ async function askPP(){
       var col=R('pp-collapse');if(col)col.textContent='Свернуть ▲';
       U().aiUsed=(U().aiUsed||0)+1;sU();
     }
-  }catch(e){toast(translateApiError(e));}
+  }catch(e){toast('Ошибка: '+e.message);}
   btn.textContent='📋 Обновить план';btn.disabled=false;updateAiCnt();
 }
 async function askPremium(){
@@ -2075,7 +1911,7 @@ async function askPremium(){
       // scroll into view
       setTimeout(function(){var pw=R('prem-home-wrap');if(pw)pw.scrollIntoView({behavior:'smooth',block:'start'});},300);
     }
-  }catch(e){toast(translateApiError(e));}
+  }catch(e){toast('Ошибка: '+e.message);}
 }
 
 /* ════ JOURNAL ════ */
@@ -2099,26 +1935,29 @@ function suggestYield(){
 
 var _aiTimer=null;
 function calcSum(){
+  // Только считает сумму — не вызывает onQtyInput (иначе бесконечный цикл)
   var qty=parseFloat(R('m-qty')&&R('m-qty').value)||0;
   var price=parseFloat(R('m-price')&&R('m-price').value)||0;
   var sumEl=R('m-sum');
   if(qty>0&&price>0&&sumEl){sumEl.value=Math.round(qty*price);}
-  onQtyInput();
 }
-function onQtyInput(){
-  calcSum();
+function triggerAiSearch(){
+  // AI-поиск запускается отдельно — чтобы не создавать цикл с calcSum
   var name=R('m-name')?R('m-name').value.trim():'';
   var qty=R('m-qty')?R('m-qty').value.trim():'';
   clearTimeout(_aiTimer);
-  if(name.length<2||!qty||qty<=0){return;}
-  // Both name AND quantity filled — trigger AI lookup
+  if(name.length<2||!qty||parseFloat(qty)<=0){return;}
   var tipEl=R('yld-tip');
   if(tipEl)tipEl.innerHTML='🔍 Ищем данные по "'+name+'"...';
   _aiTimer=setTimeout(function(){autoLookupAsset(name,qty);},1000);
 }
+function onQtyInput(){
+  // При вводе количества: сначала пересчитываем сумму, потом запускаем AI
+  calcSum();
+  triggerAiSearch();
+}
 function onAssetInput(){
   suggestYield();
-  // Don't trigger AI yet — wait for quantity to be filled
   var tipEl=R('yld-tip');
   var name=R('m-name')?R('m-name').value.trim():'';
   if(name.length>1&&tipEl){tipEl.textContent='Введи количество — AI подберёт данные автоматически';}
@@ -2143,7 +1982,7 @@ async function autoLookupAsset(name,qty){
       +'4. Дата ближайшей выплаты\n'
       +'5. Расчётный доход с '+qtyNum+' шт за год (₽)\n'
       +'Формат: только цифры и даты, без пояснений. 5 строк.';
-    trackApiCall('claude-haiku-4-5-20251001','Поиск актива: '+assetName);
+    trackApiCall('claude-haiku-4-5-20251001','Поиск актива: '+name);
     var resp=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
@@ -2253,7 +2092,7 @@ function savePurch(){
     // Check if goal reached after new purchase
     if (typeof checkGoalAchieved === 'function') setTimeout(checkGoalAchieved, 500);
   }catch(e){
-    toast(translateApiError(e));
+    toast('Ошибка: '+e.message);
     console.error('savePurch error:',e);
   }
 }
@@ -2463,78 +2302,21 @@ function doLogout(){
 }
 
 function deleteAccount(){
-  showConfirm(
-    'Удалить аккаунт?',
-    'Все данные портфеля, настройки и история будут удалены безвозвратно. Восстановление невозможно.',
-    'Удалить',
-    function(){
-      // Запрашиваем пароль для подтверждения (нужен Firebase для реаутентификации)
-      var pass=prompt('Введите пароль для подтверждения удаления:');
-      if(!pass){toast('Удаление отменено');return;}
-      _doDeleteAccount(pass);
-    }
-  );
-}
-
-async function _doDeleteAccount(pass){
-  toast('⏳ Удаляем аккаунт...');
-  try{
-    // 1. Реаутентификация — обязательно для Firebase
-    if(fbAuth&&fbAuth.currentUser&&curUser){
-      try{
-        var cred=firebase.auth.EmailAuthProvider.credential(curUser,pass);
-        await fbAuth.currentUser.reauthenticateWithCredential(cred);
-        console.log('[Delete] реаутентификация OK');
-      }catch(e){
-        console.warn('[Delete] реаутентификация failed:',e.code);
-        if(e.code==='auth/wrong-password'){
-          toast('❌ Неверный пароль');return;
-        }
-        if(e.code==='auth/too-many-requests'){
-          toast('⏳ Слишком много попыток. Подождите.');return;
-        }
-      }
-    }
-
-    // 2. Удаляем данные из Firestore
-    if(fbDb&&curUser){
-      try{
-        await fbDb.collection('users').doc(curUser.replace(/\./g,'_')).delete();
-        console.log('[Delete] Firestore OK');
-      }catch(e){console.warn('[Delete] Firestore:',e.message);}
-    }
-
-    // 3. Удаляем аккаунт из Firebase Auth
+  showConfirm('Удалить аккаунт?','Все данные портфеля, настройки и история будут удалены безвозвратно. Восстановление невозможно.','Удалить',function(){
+    var u=users[curUser];
+    // Удаляем из Firebase Auth если доступен
     if(fbAuth&&fbAuth.currentUser){
-      try{
-        await fbAuth.currentUser.delete();
-        console.log('[Delete] Firebase Auth OK');
-      }catch(e){
-        console.warn('[Delete] Auth:',e.message);
-      }
+      fbAuth.currentUser.delete().catch(function(){});
     }
-
-    // 4. Очищаем ВСЕ данные localStorage
-    localStorage.removeItem('ig_users');
-    localStorage.removeItem('ig_session');
-    localStorage.removeItem('ig_notif');
-    localStorage.removeItem('ig_admin');
-    localStorage.removeItem('ig_api_log');
-    localStorage.removeItem('ig_goal_notified');
-    localStorage.removeItem('ig_email_sent');
-
-    // 5. Выходим из Firebase
-    if(fbAuth) await fbAuth.signOut().catch(function(){});
-
-    toast('✅ Аккаунт удалён');
-    setTimeout(function(){location.reload();},1000);
-
-  }catch(e){
-    console.error('[Delete] критическая ошибка:',e);
-    localStorage.clear();
-    if(fbAuth) fbAuth.signOut().catch(function(){});
-    setTimeout(function(){location.reload();},1000);
-  }
+    // Удаляем из Firestore
+    if(fbDb&&curUser){
+      fbDb.collection('users').doc(curUser.replace(/\./g,'_')).delete().catch(function(){});
+    }
+    delete users[curUser];
+    sv('ig_users',users);
+    sv('ig_session',null);
+    location.reload();
+  });
 }
 
 var _confirmCb=null;
@@ -2660,9 +2442,27 @@ function saveEdit(){
 function triggerAv(){var inp=R('av-inp');if(inp)inp.click();}
 function loadAv(e){
   var file=e.target.files[0];if(!file)return;
-  var rd=new FileReader();rd.onload=function(ev){U().photo=ev.target.result;sU();
-    if(R('av'))R('av').innerHTML='<img src="'+ev.target.result+'">';toast('Фото обновлено');};
-  rd.readAsDataURL(file);
+  // Сжимаем фото до 120x120px перед сохранением — экономим память
+  var img=new Image();
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    img.onload=function(){
+      var canvas=document.createElement('canvas');
+      canvas.width=120;canvas.height=120;
+      var ctx=canvas.getContext('2d');
+      // Обрезаем в квадрат по центру
+      var size=Math.min(img.width,img.height);
+      var sx=(img.width-size)/2,sy=(img.height-size)/2;
+      ctx.drawImage(img,sx,sy,size,size,0,0,120,120);
+      var compressed=canvas.toDataURL('image/jpeg',0.7);
+      U().photo=compressed;sU();
+      if(typeof fbSaveUser==='function')fbSaveUser(curUser,users[curUser]);
+      if(R('av'))R('av').innerHTML='<img src="'+compressed+'">';
+      toast('✅ Фото обновлено');
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
 }
 
 function showLegal(type){
@@ -2670,7 +2470,7 @@ function showLegal(type){
   var titles={terms:'Условия использования',privacy:'Конфиденциальность',disclaimer:'Дисклеймер'};
   var LEGAL={
     terms:'<h4>Условия использования ИнвестГид</h4>ИнвестГид — образовательный сервис. Не является брокером, инвестиционным советником по ФЗ №39-ФЗ. Все материалы носят образовательный характер.',
-    privacy:'<h4>Политика конфиденциальности</h4><p>Данные хранятся на защищённых облачных серверах (Google Cloud) с шифрованием HTTPS. Доступны только вам и администрации сервиса. Не передаются рекламным сетям. Соответствует ФЗ №152-ФЗ. Удаление — в Профиле.</p>',
+    privacy:'<h4>Конфиденциальность</h4>Данные хранятся локально на устройстве (localStorage). Не передаются третьим лицам. Соответствует ФЗ №152-ФЗ.',
     disclaimer:'<h4>Дисклеймер</h4>Материалы ИнвестГид НЕ являются ИИР по ст. 6.1 ФЗ №39-ФЗ. Инвестирование сопряжено с риском потери средств.'
   };
   var t=R('legal-t'),c=R('legal-c');
@@ -2695,49 +2495,11 @@ function adminTab(tab){
 }
 function adUsers(){
   var ul=R('adp-users');if(!ul)return;
-  var pn={free:'Бесплатно',base:'Старт',pro:'Про',premium:'Премиум'};
-
-  // Показываем локальных пока загружаем из Firebase
-  var localUsers=lv('ig_users',{});
-  function renderUsers(allUsers){
-    var keys=Object.keys(allUsers);
-    ul.innerHTML=keys.length?keys.map(function(e){
-      var u=allUsers[e];
-      var plan=pn[u.plan||'free'];
-      var planColor={free:'color:var(--mu)',base:'color:#6B9FFF',pro:'color:var(--green)',premium:'color:#FFD000'}[u.plan||'free']||'';
-      return '<div style="padding:10px 0;border-bottom:1px solid var(--bd)">'
-        +'<div style="font-size:12px;font-weight:600">'+e+'</div>'
-        +'<div style="display:flex;justify-content:space-between;margin-top:3px">'
-        +'<span style="font-size:11px;color:var(--hi)">'+(u.name||'—')+'</span>'
-        +'<span style="font-size:11px;font-weight:700;'+planColor+'">'+plan+'</span>'
-        +'</div>'
-        +(u.consentDate?'<div style="font-size:10px;color:var(--mu);margin-top:2px">Рег: '+new Date(u.consentDate).toLocaleDateString('ru-RU')+'</div>':'')
-        +'</div>';
-    }).join(''):'<div style="text-align:center;padding:16px;color:var(--hi);font-size:12px">Нет пользователей</div>';
-  }
-
-  // Сначала рендерим локальных
-  renderUsers(localUsers);
-
-  // Затем загружаем всех из Firebase
-  if(fbDb){
-    ul.innerHTML='<div style="text-align:center;padding:16px;color:var(--hi);font-size:12px">⏳ Загружаем из облака...</div>';
-    fbDb.collection('users').get()
-      .then(function(snapshot){
-        var firebaseUsers={};
-        snapshot.forEach(function(doc){
-          var email=doc.id.replace(/_/g,'.');
-          firebaseUsers[email]=doc.data();
-        });
-        // Мержим с локальными
-        var allUsers=Object.assign({},localUsers,firebaseUsers);
-        renderUsers(allUsers);
-      })
-      .catch(function(e){
-        console.warn('[Admin] Firebase users error:',e);
-        renderUsers(localUsers); // fallback на локальные
-      });
-  }
+  var users=lv('ig_users',{});var pn={free:'Бесплатно',base:'Старт',pro:'Про',premium:'Премиум'};
+  ul.innerHTML=Object.keys(users).length?Object.keys(users).map(function(e){var u=users[e];
+    return '<div style="padding:8px 0;border-bottom:1px solid var(--bd)"><div style="font-size:12px;font-weight:500">'+e+'</div>'
+      +'<div style="font-size:10px;color:var(--hi)">'+(u.name||'—')+' · '+(pn[u.plan||'free'])+'</div></div>';
+  }).join(''):'<div style="text-align:center;padding:16px;color:var(--hi);font-size:12px">Нет пользователей</div>';
 }
 function trackApiCall(model, label){
   var key='ig_api_log';
@@ -2757,80 +2519,63 @@ function trackApiCall(model, label){
 }
 function adApp(){
   var el=R('adp-stats');if(!el)return;
+  var users=lv('ig_users',{});
   var apiLog=lv('ig_api_log',[]);
+  var total=Object.keys(users).length;
+  var paid=Object.values(users).filter(function(u){return u.plan&&u.plan!=='free'}).length;
+  var byPlan={free:0,base:0,pro:0,premium:0};
+  Object.values(users).forEach(function(u){var p=u.plan||'free';if(byPlan[p]!==undefined)byPlan[p]++;});
 
-  function renderStats(allUsers){
-    var total=Object.keys(allUsers).length;
-    var paid=Object.values(allUsers).filter(function(u){return u.plan&&u.plan!=='free'}).length;
-    var byPlan={free:0,base:0,pro:0,premium:0};
-    Object.values(allUsers).forEach(function(u){var p=u.plan||'free';if(byPlan[p]!==undefined)byPlan[p]++;});
+  // API stats
+  var today=new Date().toLocaleDateString('ru-RU');
+  var todayCalls=apiLog.filter(function(e){return e.date===today}).length;
+  var monthCalls=apiLog.filter(function(e){
+    var d=new Date(e.ts);var n=new Date();
+    return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth();
+  }).length;
+  var totalCalls=apiLog.length;
 
-    // API stats
-    var today=new Date().toLocaleDateString('ru-RU');
-    var todayCalls=apiLog.filter(function(e){return e.date===today}).length;
-    var monthCalls=apiLog.filter(function(e){
-      var d=new Date(e.ts);var n=new Date();
-      return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth();
-    }).length;
-    var totalCalls=apiLog.length;
-    var sonnetCalls=apiLog.filter(function(e){return e.model&&e.model.includes('sonnet')}).length;
-    var haikuCalls=apiLog.filter(function(e){return e.model&&e.model.includes('haiku')}).length;
-    var costSonnet=sonnetCalls*0.0095;
-    var costHaiku=haikuCalls*0.0016;
-    var costTotal=(costSonnet+costHaiku)*90;
+  // Breakdown by model
+  var sonnetCalls=apiLog.filter(function(e){return e.model&&e.model.includes('sonnet')}).length;
+  var haikuCalls=apiLog.filter(function(e){return e.model&&e.model.includes('haiku')}).length;
 
-    el.innerHTML=
-      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">'
-        +'<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:9px;color:var(--hi);margin-bottom:4px;text-transform:uppercase">Всего запросов</div><div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--sc)">'+totalCalls+'</div></div>'
-        +'<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:9px;color:var(--hi);margin-bottom:4px;text-transform:uppercase">Сегодня</div><div style="font-family:var(--mono);font-size:22px;font-weight:700">'+todayCalls+'</div></div>'
-        +'<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:9px;color:var(--hi);margin-bottom:4px;text-transform:uppercase">В этом месяце</div><div style="font-family:var(--mono);font-size:22px;font-weight:700">'+monthCalls+'</div></div>'
-        +'<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:9px;color:var(--hi);margin-bottom:4px;text-transform:uppercase">Расч. стоимость</div><div style="font-family:var(--mono);font-size:18px;font-weight:700;color:#F7B731">~'+Math.round(costTotal)+'₽</div></div>'
-      +'</div>'
-      +'<div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px;margin-bottom:10px;font-size:12px;line-height:1.9">'
-        +'<div style="font-weight:700;margin-bottom:6px;font-size:11px;text-transform:uppercase;color:var(--hi)">Модели</div>'
-        +'<div style="display:flex;justify-content:space-between"><span>Sonnet (AI-кнопки, планы)</span><span style="font-family:var(--mono)">'+sonnetCalls+'</span></div>'
-        +'<div style="display:flex;justify-content:space-between"><span>Haiku (поиск активов, тест)</span><span style="font-family:var(--mono)">'+haikuCalls+'</span></div>'
-      +'</div>'
-      +'<div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px;margin-bottom:10px;font-size:12px;line-height:1.9">'
-        +'<div style="font-weight:700;margin-bottom:6px;font-size:11px;text-transform:uppercase;color:var(--hi)">Пользователи ('+total+')</div>'
-        +'<div style="display:flex;justify-content:space-between"><span>🆓 Бесплатный</span><span style="font-family:var(--mono)">'+byPlan.free+'</span></div>'
-        +'<div style="display:flex;justify-content:space-between"><span>🚀 Старт</span><span style="font-family:var(--mono)">'+byPlan.base+'</span></div>'
-        +'<div style="display:flex;justify-content:space-between"><span>💎 Про</span><span style="font-family:var(--mono)">'+byPlan.pro+'</span></div>'
-        +'<div style="display:flex;justify-content:space-between"><span>⭐ Премиум</span><span style="font-family:var(--mono)">'+byPlan.premium+'</span></div>'
-        +'<div style="display:flex;justify-content:space-between;border-top:1px solid var(--bd);padding-top:4px;margin-top:4px;color:var(--sc)"><span>Платных</span><span style="font-family:var(--mono)">'+paid+'</span></div>'
-      +'</div>'
-      +'<div style="font-size:11px;color:var(--mu);font-weight:700;margin-bottom:6px">Последние запросы</div>'
-      +'<div style="max-height:140px;overflow-y:auto">'
-      +(apiLog.length?apiLog.slice(0,20).map(function(e){
-        return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px">'
-          +'<span style="color:var(--hi)">'+e.time+' '+e.date+'</span>'
-          +'<span style="flex:1;text-align:center;color:var(--tx)">'+e.label+'</span>'
-          +'<span style="color:var(--mu)">'+e.user+'</span>'
-          +'</div>';
-      }).join(''):'<div style="text-align:center;color:var(--hi);padding:10px;font-size:11px">Запросов ещё нет</div>')
-      +'</div>'
-      +'<button onclick="if(confirm(\'Очистить историю API?\'))sv(\'ig_api_log\',[]);adApp();" style="width:100%;padding:8px;border:1px solid rgba(255,100,100,.2);border-radius:8px;background:transparent;color:rgba(255,100,100,.6);font-size:11px;cursor:pointer;margin-top:10px">🗑 Очистить историю</button>';
-  }
+  // Cost estimate
+  var costSonnet=sonnetCalls*0.0095;
+  var costHaiku=haikuCalls*0.0016;
+  var costTotal=(costSonnet+costHaiku)*90; // in rub
 
-  // Сначала рендерим локальные данные
-  var localUsers=lv('ig_users',{});
-  renderStats(localUsers);
-
-  // Потом загружаем из Firebase
-  if(fbDb){
-    fbDb.collection('users').get()
-      .then(function(snapshot){
-        var firebaseUsers={};
-        snapshot.forEach(function(doc){
-          var email=doc.id.replace(/_/g,'.');
-          firebaseUsers[email]=doc.data();
-        });
-        renderStats(Object.assign({},localUsers,firebaseUsers));
-      })
-      .catch(function(e){console.warn('[Admin] stats error:',e);});
-  }
+  el.innerHTML=
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">'
+      +'<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:9px;color:var(--hi);margin-bottom:4px;text-transform:uppercase">Всего запросов</div><div style="font-family:var(--mono);font-size:22px;font-weight:700;color:var(--sc)">'+totalCalls+'</div></div>'
+      +'<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:9px;color:var(--hi);margin-bottom:4px;text-transform:uppercase">Сегодня</div><div style="font-family:var(--mono);font-size:22px;font-weight:700">'+todayCalls+'</div></div>'
+      +'<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:9px;color:var(--hi);margin-bottom:4px;text-transform:uppercase">В этом месяце</div><div style="font-family:var(--mono);font-size:22px;font-weight:700">'+monthCalls+'</div></div>'
+      +'<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:10px;text-align:center"><div style="font-size:9px;color:var(--hi);margin-bottom:4px;text-transform:uppercase">Расч. стоимость</div><div style="font-family:var(--mono);font-size:18px;font-weight:700;color:#F7B731">~'+Math.round(costTotal)+'₽</div></div>'
+    +'</div>'
+    +'<div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px;margin-bottom:10px;font-size:12px;line-height:1.9">'
+      +'<div style="font-weight:700;margin-bottom:6px;font-size:11px;text-transform:uppercase;color:var(--hi)">Модели</div>'
+      +'<div style="display:flex;justify-content:space-between"><span>Sonnet (AI-кнопки, планы)</span><span style="font-family:var(--mono)">'+sonnetCalls+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between"><span>Haiku (поиск активов, тест)</span><span style="font-family:var(--mono)">'+haikuCalls+'</span></div>'
+    +'</div>'
+    +'<div style="background:rgba(255,255,255,.04);border-radius:10px;padding:10px;margin-bottom:10px;font-size:12px;line-height:1.9">'
+      +'<div style="font-weight:700;margin-bottom:6px;font-size:11px;text-transform:uppercase;color:var(--hi)">Пользователи ('+total+')</div>'
+      +'<div style="display:flex;justify-content:space-between"><span>🆓 Бесплатный</span><span style="font-family:var(--mono)">'+byPlan.free+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between"><span>🚀 Старт</span><span style="font-family:var(--mono)">'+byPlan.base+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between"><span>💎 Про</span><span style="font-family:var(--mono)">'+byPlan.pro+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between"><span>⭐ Премиум</span><span style="font-family:var(--mono)">'+byPlan.premium+'</span></div>'
+      +'<div style="display:flex;justify-content:space-between;border-top:1px solid var(--bd);padding-top:4px;margin-top:4px;color:var(--sc)"><span>Платных</span><span style="font-family:var(--mono)">'+paid+'</span></div>'
+    +'</div>'
+    +'<div style="font-size:11px;color:var(--mu);font-weight:700;margin-bottom:6px">Последние запросы</div>'
+    +'<div style="max-height:140px;overflow-y:auto">'
+    +(apiLog.length?apiLog.slice(0,20).map(function(e){
+      return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px">'
+        +'<span style="color:var(--hi)">'+e.time+' '+e.date+'</span>'
+        +'<span style="flex:1;text-align:center;color:var(--tx)">'+e.label+'</span>'
+        +'<span style="color:var(--mu)">'+e.user+'</span>'
+        +'</div>';
+    }).join(''):'<div style="text-align:center;color:var(--hi);padding:10px;font-size:11px">Запросов ещё нет</div>')
+    +'</div>'
+    +'<button onclick="if(confirm(\'Очистить историю API?\'))sv(\'ig_api_log\',[]);adApp();" style="width:100%;padding:8px;border:1px solid rgba(255,100,100,.2);border-radius:8px;background:transparent;color:rgba(255,100,100,.6);font-size:11px;cursor:pointer;margin-top:10px">🗑 Очистить историю</button>';
 }
-
 function adTest(){
   // Panel content with button already exists in HTML — just clear results
   var res=R('ad-test-r');
@@ -3080,7 +2825,7 @@ function testKey(){
     headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:10,messages:[{role:'user',content:'ping'}]})
   }).then(function(r){return r.json();}).then(function(d){
-    st.textContent=d.error?'❌ '+translateApiError(d.error):'✅ Соединение OK — Claude API отвечает';
+    st.textContent=d.error?'❌ '+d.error.message:'✅ Соединение OK — Claude API отвечает';
     st.style.color=d.error?'var(--red)':'var(--green)';
   }).catch(function(e){st.textContent='❌ '+e.message;st.style.color='var(--red)';});
 }
@@ -3181,13 +2926,11 @@ function showLocalNotif(title, body, icon, url) {
 /* ─── Умный планировщик с учётом настроек ─── */
 function scheduleReminderCustom() {
   var cfg = lv('ig_notif', {pushOn:false, day:1, hour:10, emailOn:false, email:''});
-  if (!cfg.pushOn) return;
-  if (Notification.permission !== 'granted') return;
+  if (!cfg.pushOn || Notification.permission !== 'granted') return;
   var now = new Date();
   var next = new Date(now.getFullYear(), now.getMonth(), cfg.day, cfg.hour, 0, 0);
   if (next <= now) next = new Date(now.getFullYear(), now.getMonth()+1, cfg.day, cfg.hour, 0, 0);
   var msUntil = next - now;
-  // Не создаём новый таймер если уже есть
   if (window._reminderTimer) clearTimeout(window._reminderTimer);
   window._reminderTimer = setTimeout(function() {
     var u = typeof U === 'function' ? U() : {};
@@ -3196,11 +2939,9 @@ function scheduleReminderCustom() {
     showLocalNotif('📅 Время пополнить портфель!', 'Взнос: '+budget+'/мес · '+strat, null, '/');
     var c2 = lv('ig_notif', {});
     if (c2.emailOn && c2.email) sendReminderEmail(c2.email, budget, strat);
-    // Планируем следующее через месяц
-    window._reminderTimer = null;
     setTimeout(scheduleReminderCustom, 5000);
   }, msUntil);
-  console.log('[App] Напоминание запланировано:', next.toLocaleString('ru-RU'), 'через', Math.round(msUntil/1000/60), 'мин');
+  console.log('[App] Напоминание:', next.toLocaleString('ru-RU'));
 }
 function scheduleMonthlyReminder() { scheduleReminderCustom(); }
 
@@ -3227,12 +2968,6 @@ function sendEmail(toEmail,subject,message,onSuccess,onError){
     .catch(function(e){if(onError)onError(e.text||e.message||'Ошибка');});
 }
 function sendReminderEmail(email,budget,strat){
-  // Защита от спама — отправляем не чаще 1 раза в день
-  var today=new Date().toLocaleDateString('ru-RU');
-  var lastSent=localStorage.getItem('ig_email_sent');
-  if(lastSent===today){console.log('[Email] уже отправлено сегодня');return;}
-  localStorage.setItem('ig_email_sent',today);
-
   var MO=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
   var now=new Date();
   sendEmail(email,'📅 Время пополнить портфель — ИнвестГид',
@@ -3299,66 +3034,7 @@ function checkGoalAchieved() {
   }
 }
 
-/* ═══ ONBOARDING ═══ */
-var _obPage=0;
-
-function obGoTo(n){
-  _obPage=n;
-  var slides=document.querySelectorAll('.ob-slide');
-  slides.forEach(function(s,i){
-    s.style.transform='translateX('+((i-n)*100)+'%)';
-  });
-  // Dots
-  for(var i=0;i<3;i++){
-    var d=R('ob-dot-'+i);
-    if(d){
-      d.style.width=i===n?'24px':'8px';
-      d.style.background=i===n?'var(--green)':'rgba(255,255,255,0.2)';
-    }
-  }
-  // Кнопка Далее/Начать
-  var btn=R('ob-btn');
-  if(btn)btn.textContent=n===2?'Начать →':'Далее →';
-  // Кнопка Назад — показываем только со 2 страницы
-  var back=R('ob-back-btn');
-  if(back)back.style.opacity=n>0?'1':'0';
-}
-
-function obNext(){
-  if(_obPage>=2){closeOnboard();return;}
-  obGoTo(_obPage+1);
-}
-
-function obBack(){
-  if(_obPage<=0)return;
-  obGoTo(_obPage-1);
-}
-
-function initObSlides(){
-  _obPage=0;
-  var slides=document.querySelectorAll('.ob-slide');
-  slides.forEach(function(s,i){
-    s.style.transform='translateX('+(i*100)+'%)';
-  });
-  // Сброс dots
-  obGoTo(0);
-  // Свайп
-  var cont=R('ob-slides');
-  if(cont){
-    var startX=0;
-    cont.addEventListener('touchstart',function(e){
-      startX=e.touches[0].clientX;
-    },{passive:true});
-    cont.addEventListener('touchend',function(e){
-      var dx=e.changedTouches[0].clientX-startX;
-      if(Math.abs(dx)>50){
-        if(dx<0&&_obPage<2)obGoTo(_obPage+1);
-        else if(dx>0&&_obPage>0)obGoTo(_obPage-1);
-      }
-    });
-  }
-}
-
+/* ── iOS определение ── */
 var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
 var isInStandaloneMode=window.navigator.standalone===true;
 // Показываем подсказку для iOS
